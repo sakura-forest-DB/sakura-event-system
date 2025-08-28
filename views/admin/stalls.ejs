@@ -111,7 +111,12 @@
                             <% if (stallApplications.length > 0) { %>
                                 <% stallApplications.forEach(stall => { %>
                                     <tr>
-                                        <td><strong><a href="/admin/stalls/<%= stall.id %>" class="text-decoration-none"><%= stall.groupName %></a></strong></td>
+                                        <td>
+                                            <strong><a href="/admin/stalls/<%= stall.id %>" class="text-decoration-none"><%= stall.groupName %></a></strong>
+                                            <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
+                                                <span class="badge bg-success ms-1" title="管理メモ <%= stall.adminNotes.length %>件">📝 <%= stall.adminNotes.length %></span>
+                                            <% } %>
+                                        </td>
                                         <td><%= stall.representative %></td>
                                         <td>
                                             <span class="badge bg-<%= stall.boothType === '飲食' ? 'warning' : 'info' %>">

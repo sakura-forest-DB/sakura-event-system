@@ -338,7 +338,8 @@ router.get('/stalls', requireAuth, async (req, res) => {
     const stallApplications = await prisma.stallApplication.findMany({
       where: whereClause,
       include: {
-        event: true
+        event: true,
+        adminNotes: true
       },
       skip: offset,
       take: limit,
@@ -375,7 +376,12 @@ router.get('/stalls/:id', requireAuth, async (req, res) => {
     const prisma = req.prisma;
     const stallApplication = await prisma.stallApplication.findUnique({
       where: { id: req.params.id },
-      include: { event: true }
+      include: { 
+        event: true,
+        adminNotes: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
     });
 
     if (!stallApplication) {
@@ -501,7 +507,8 @@ router.get('/performers', requireAuth, async (req, res) => {
     const performerApplications = await prisma.performerApplication.findMany({
       where: whereClause,
       include: {
-        event: true
+        event: true,
+        adminNotes: true
       },
       skip: offset,
       take: limit,
@@ -538,7 +545,12 @@ router.get('/performers/:id', requireAuth, async (req, res) => {
     const prisma = req.prisma;
     const performerApplication = await prisma.performerApplication.findUnique({
       where: { id: req.params.id },
-      include: { event: true }
+      include: { 
+        event: true,
+        adminNotes: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
     });
 
     if (!performerApplication) {
@@ -625,6 +637,58 @@ router.get('/performers/export', requireAuth, async (req, res) => {
       title: 'エラー',
       message: '出演申込CSVエクスポート中にエラーが発生しました'
     });
+  }
+});
+
+// 追記メモ投稿（出店申込）
+router.post('/stalls/:id/notes', requireAuth, async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { content, adminName } = req.body;
+    
+    if (!content || !adminName) {
+      return res.redirect(`/admin/stalls/${req.params.id}?error=メモ内容と記録者名を入力してください`);
+    }
+
+    await prisma.applicationNote.create({
+      data: {
+        content: content.trim(),
+        adminName: adminName.trim(),
+        stallApplicationId: req.params.id
+      }
+    });
+
+    res.redirect(`/admin/stalls/${req.params.id}`);
+
+  } catch (error) {
+    console.error('Stall note creation error:', error);
+    res.redirect(`/admin/stalls/${req.params.id}?error=メモの保存に失敗しました`);
+  }
+});
+
+// 追記メモ投稿（出演申込）
+router.post('/performers/:id/notes', requireAuth, async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { content, adminName } = req.body;
+    
+    if (!content || !adminName) {
+      return res.redirect(`/admin/performers/${req.params.id}?error=メモ内容と記録者名を入力してください`);
+    }
+
+    await prisma.applicationNote.create({
+      data: {
+        content: content.trim(),
+        adminName: adminName.trim(),
+        performerApplicationId: req.params.id
+      }
+    });
+
+    res.redirect(`/admin/performers/${req.params.id}`);
+
+  } catch (error) {
+    console.error('Performer note creation error:', error);
+    res.redirect(`/admin/performers/${req.params.id}?error=メモの保存に失敗しました`);
   }
 });
 

@@ -351,6 +351,69 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- 管理メモセクション -->
+                <div class="card mt-3 d-print-none">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 管理メモ</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- メモ追加フォーム -->
+                        <form method="POST" action="/admin/stalls/<%= stall.id %>/notes" class="mb-3">
+                            <div class="mb-2">
+                                <label for="adminName" class="form-label">記録者名</label>
+                                <input type="text" class="form-control form-control-sm" id="adminName" name="adminName" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="content" class="form-label">メモ内容</label>
+                                <textarea class="form-control form-control-sm" id="content" name="content" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">追記</button>
+                        </form>
+
+                        <!-- 既存メモ一覧 -->
+                        <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
+                            <hr>
+                            <h6>やりとり履歴</h6>
+                            <% stall.adminNotes.forEach(note => { %>
+                                <div class="border-start border-3 border-info ps-2 mb-2">
+                                    <small class="text-muted">
+                                        <%= new Date(note.createdAt).toLocaleString('ja-JP') %> 
+                                        by <strong><%= note.adminName %></strong>
+                                    </small>
+                                    <div class="small" style="white-space: pre-wrap;"><%= note.content %></div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="text-muted small">まだメモはありません</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 印刷用メモセクション（A4 2枚目） -->
+        <div class="d-none d-print-block page-break-before">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">📝 管理メモ・やりとり履歴</h4>
+                </div>
+                <div class="card-body">
+                    <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
+                        <% stall.adminNotes.forEach(note => { %>
+                            <div class="mb-3 no-page-break">
+                                <div class="form-label">
+                                    <%= new Date(note.createdAt).toLocaleString('ja-JP') %> / <%= note.adminName %>
+                                </div>
+                                <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 20px; border: 1px solid #dee2e6; padding: 8px; border-radius: 4px;">
+                                    <%= note.content %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="text-muted">やりとり記録はありません</p>
+                    <% } %>
+                </div>
             </div>
         </div>
     </main>

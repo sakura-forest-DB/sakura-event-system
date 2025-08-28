@@ -108,7 +108,12 @@
                             <% if (performerApplications.length > 0) { %>
                                 <% performerApplications.forEach(performer => { %>
                                     <tr>
-                                        <td><strong><a href="/admin/performers/<%= performer.id %>" class="text-decoration-none"><%= performer.groupName %></a></strong></td>
+                                        <td>
+                                            <strong><a href="/admin/performers/<%= performer.id %>" class="text-decoration-none"><%= performer.groupName %></a></strong>
+                                            <% if (performer.adminNotes && performer.adminNotes.length > 0) { %>
+                                                <span class="badge bg-success ms-1" title="管理メモ <%= performer.adminNotes.length %>件">📝 <%= performer.adminNotes.length %></span>
+                                            <% } %>
+                                        </td>
                                         <td><%= performer.representative %></td>
                                         <td>
                                             <div class="small">
