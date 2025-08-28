@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+        .bg-primary { background-color: #2d5a27 !important; }
+        .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+        .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+        footer { background-color: #f8f9fa; margin-top: auto; }
+        .option-card { border: 2px solid #dee2e6; transition: all 0.3s; }
+        .option-card:hover { border-color: #2d5a27; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-icon { font-size: 4rem; color: #2d5a27; margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">ボランティア登録</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/apply">イベント申込</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">管理画面</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="text-center mb-5">
+                    <h2>📝 申し込みフォーム</h2>
+                    <p class="lead text-muted">出店または出演をご希望の方は、下記よりお選びください</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card option-card h-100">
+                            <div class="card-body text-center p-5">
+                                <div class="option-icon">🏪</div>
+                                <h4 class="card-title">出店申込</h4>
+                                <p class="card-text">
+                                    飲食店・物販店の出店をご希望の方<br>
+                                    <small class="text-muted">※応募要項Aに準拠</small>
+                                </p>
+                                <ul class="list-unstyled text-muted small text-start">
+                                    <li>• 出店内容・販売品目の詳細</li>
+                                    <li>• テント設営・レンタル什器</li>
+                                    <li>• 搬入搬出・車両情報</li>
+                                </ul>
+                                <a href="/apply/stall" class="btn btn-primary btn-lg">出店申込へ</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card option-card h-100">
+                            <div class="card-body text-center p-5">
+                                <div class="option-icon">🎭</div>
+                                <h4 class="card-title">出演申込</h4>
+                                <p class="card-text">
+                                    音楽・演劇・ダンス等の出演をご希望の方<br>
+                                    <small class="text-muted">※応募要項Bに準拠</small>
+                                </p>
+                                <ul class="list-unstyled text-muted small text-start">
+                                    <li>• 出演内容・演目の詳細</li>
+                                    <li>• 音響機材・マイクのレンタル</li>
+                                    <li>• 出演者数・希望枠数</li>
+                                </ul>
+                                <a href="/apply/performer" class="btn btn-primary btn-lg">出演申込へ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 text-center">
+                    <div class="alert alert-info">
+                        <h6>📝 申込前にご確認ください</h6>
+                        <p class="mb-0">
+                            各申込フォームには応募要項に基づいた詳細な入力項目があります。<br>
+                            事前に必要な情報をご準備の上、お申し込みください。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-outline-secondary">ホームに戻る</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3 mt-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

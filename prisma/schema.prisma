@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Volunteer {
+  id        String   @id @default(cuid())
+  type      String   // "individual" or "org"
+  name      String
+  orgName   String?
+  email     String
+  phone     String?
+  address   String?
+  skills    String   // JSON array as string
+  interests String   // JSON array as string
+  notes     String?
+  createdAt DateTime @default(now())
+  
+  signups   Signup[]
+  volunteerTags VolunteerTag[]
+  
+  @@unique([email, name])
+  @@map("volunteers")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  date        DateTime
+  applicationStartDate DateTime?  // 申込開始日
+  location    String
+  description String
+  createdAt   DateTime @default(now())
+  
+  signups              Signup[]
+  stallApplications    StallApplication[]
+  performerApplications PerformerApplication[]
+  
+  @@map("events")
+}
+
+model Signup {
+  id           String   @id @default(cuid())
+  volunteerId  String
+  eventId      String
+  role         String   // "保全", "出演", "出店", "運営"
+  detailsJson  String   // JSON string with role-specific details
+  availability String?
+  freq         String   // "monthly", "weekly", "ad-hoc"
+  status       String   @default("applied") // "applied", "accepted", "declined"
+  memo         String?
+  createdAt    DateTime @default(now())
+  
+  volunteer    Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  event        Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@map("signups")
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  kind String // category of tag
+  
+  volunteerTags VolunteerTag[]
+  
+  @@map("tags")
+}
+
+model VolunteerTag {
+  volunteerId String
+  tagId       String
+  
+  volunteer   Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([volunteerId, tagId])
+  @@map("volunteer_tags")
+}
+
+model StallApplication {
+  id             String   @id @default(cuid())
+  groupName      String   // 参加団体名
+  representative String   // 代表者名
+  address        String?
+  email          String
+  phone          String
+  boothType      String   // "飲食" | "物販"
+  items          String?  // 販売品目
+  priceRangeMin  Int?
+  priceRangeMax  Int?
+  boothCount     Int?     // 希望出店枠数
+  tentWidth      Float?
+  tentDepth      Float?
+  tentHeight     Float?
+  vehicleCount   Int?     // 搬入・搬出車両台数
+  rentalTables   Int?     // レンタル什器（テーブル）
+  rentalChairs   Int?     // レンタル什器（椅子）
+  questions      String?  // 連絡事項
+  eventId        String?
+  createdAt      DateTime @default(now())
+  
+  event          Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  
+  @@map("stall_applications")
+}
+
+model PerformerApplication {
+  id             String   @id @default(cuid())
+  groupName      String   // 参加団体名
+  representative String   // 代表者名
+  address        String?
+  email          String
+  phone          String
+  performance    String   // 出演内容
+  performerCount Int?
+  slotCount      Int?     // 希望出演枠数
+  vehicleCount   Int?     // 搬入・搬出車両台数
+  rentalAmp      Int?     // 音源再生の希望数
+  rentalMic      Int?     // 追加マイク本数
+  questions      String?  // 連絡事項
+  eventId        String?
+  createdAt      DateTime @default(now())
+  
+  event          Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  
+  @@map("performer_applications")
+}

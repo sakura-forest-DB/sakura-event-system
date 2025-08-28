@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+        .bg-primary { background-color: #2d5a27 !important; }
+        .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+        .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+        footer { background-color: #f8f9fa; margin-top: auto; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">ボランティア登録</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/apply">イベント申込</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">管理画面</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>管理画面</h2>
+            <div>
+                <a href="/admin/stalls/export" class="btn btn-success">CSVエクスポート</a>
+                <a href="/admin/logout" class="btn btn-outline-secondary">ログアウト</a>
+            </div>
+        </div>
+
+        <!-- 管理者タブメニュー -->
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/volunteers">ボランティア</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/admin/stalls">出店申し込み</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/performers">出演申し込み</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/events">イベント管理</a>
+            </li>
+        </ul>
+
+        <!-- 検索・絞り込みフォーム -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="/admin/stalls" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">キーワード検索</label>
+                        <input type="text" class="form-control" name="search" value="<%= filters.search || '' %>" 
+                               placeholder="団体名、代表者名、メール">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">出店内容</label>
+                        <select class="form-control" name="boothType">
+                            <option value="">全て</option>
+                            <option value="飲食" <%= filters.boothType === '飲食' ? 'selected' : '' %>>飲食</option>
+                            <option value="物販" <%= filters.boothType === '物販' ? 'selected' : '' %>>物販</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">検索</button>
+                        <a href="/admin/stalls" class="btn btn-outline-secondary">クリア</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 出店申込一覧 -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>団体名</th>
+                                <th>代表者</th>
+                                <th>出店内容</th>
+                                <th>イベント</th>
+                                <th>メール・電話</th>
+                                <th>詳細情報</th>
+                                <th>申込日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (stallApplications.length > 0) { %>
+                                <% stallApplications.forEach(stall => { %>
+                                    <tr>
+                                        <td><strong><a href="/admin/stalls/<%= stall.id %>" class="text-decoration-none"><%= stall.groupName %></a></strong></td>
+                                        <td><%= stall.representative %></td>
+                                        <td>
+                                            <span class="badge bg-<%= stall.boothType === '飲食' ? 'warning' : 'info' %>">
+                                                <%= stall.boothType %>
+                                            </span>
+                                            <% if (stall.boothCount) { %>
+                                                <small class="d-block text-muted"><%= stall.boothCount %>枠希望</small>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (stall.event) { %>
+                                                <strong><%= stall.event.title %></strong>
+                                                <small class="d-block text-muted"><%= new Date(stall.event.date).toLocaleDateString('ja-JP') %></small>
+                                            <% } else { %>
+                                                <span class="text-muted">イベント未選択</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="small">
+                                                <div><%= stall.email %></div>
+                                                <% if (stall.phone) { %>
+                                                    <div class="text-muted"><%= stall.phone %></div>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="small">
+                                                <% if (stall.items) { %>
+                                                    <div><strong>品目:</strong> <%= stall.items.length > 30 ? stall.items.substring(0, 30) + '...' : stall.items %></div>
+                                                <% } %>
+                                                <% if (stall.priceRangeMin || stall.priceRangeMax) { %>
+                                                    <div><strong>価格:</strong> <%= stall.priceRangeMin || 0 %>-<%= stall.priceRangeMax || 0 %>円</div>
+                                                <% } %>
+                                                <% if (stall.tentWidth && stall.tentDepth) { %>
+                                                    <div><strong>テント:</strong> <%= stall.tentWidth %>×<%= stall.tentDepth %>m</div>
+                                                <% } %>
+                                                <% if (stall.vehicleCount) { %>
+                                                    <div><strong>車両:</strong> <%= stall.vehicleCount %>台</div>
+                                                <% } %>
+                                                <% if (stall.questions) { %>
+                                                    <div><strong>要望:</strong> 
+                                                        <span class="text-info" title="<%= stall.questions %>">
+                                                            <%= stall.questions.length > 25 ? stall.questions.substring(0, 25) + '...' : stall.questions %>
+                                                        </span>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td><%= new Date(stall.createdAt).toLocaleDateString('ja-JP') %></td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">該当する出店申込が見つかりません</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ページネーション -->
+                <% if (pagination.total > 1) { %>
+                    <nav aria-label="ページネーション">
+                        <ul class="pagination justify-content-center">
+                            <% if (pagination.hasPrev) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= pagination.current - 1 %>&<%= new URLSearchParams(filters).toString() %>">前へ</a>
+                                </li>
+                            <% } %>
+                            
+                            <% for (let i = Math.max(1, pagination.current - 2); i <= Math.min(pagination.total, pagination.current + 2); i++) { %>
+                                <li class="page-item <%= i === pagination.current ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>&<%= new URLSearchParams(filters).toString() %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            
+                            <% if (pagination.hasNext) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= pagination.current + 1 %>&<%= new URLSearchParams(filters).toString() %>">次へ</a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3 mt-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

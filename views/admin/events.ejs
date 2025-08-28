@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+        .bg-primary { background-color: #2d5a27 !important; }
+        .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+        .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+        footer { background-color: #f8f9fa; margin-top: auto; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">ボランティア登録</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/apply">イベント申込</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">管理画面</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>管理画面</h2>
+            <div>
+                <a href="/admin/events/new" class="btn btn-primary">新しいイベント</a>
+                <a href="/admin/logout" class="btn btn-outline-secondary">ログアウト</a>
+            </div>
+        </div>
+
+        <!-- 管理者タブメニュー -->
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/volunteers">ボランティア</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/stalls">出店申し込み</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/performers">出演申し込み</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/admin/events">イベント管理</a>
+            </li>
+        </ul>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>イベント名</th>
+                                <th>スラッグ</th>
+                                <th>日時</th>
+                                <th>場所</th>
+                                <th>申込者数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (events.length > 0) { %>
+                                <% events.forEach(event => { %>
+                                    <tr>
+                                        <td><strong><%= event.title %></strong></td>
+                                        <td><code><%= event.slug %></code></td>
+                                        <td>
+                                            <%= new Date(event.date).toLocaleDateString('ja-JP') %>
+                                            <% if (new Date(event.date) > new Date()) { %>
+                                                <span class="badge bg-success ms-1">予定</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary ms-1">終了</span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= event.location %></td>
+                                        <td>
+                                            <span class="badge bg-info"><%= event._count.signups %> 人</span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/events/<%= event.id %>/edit" class="btn btn-sm btn-outline-primary">編集</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">イベントがまだ作成されていません</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3 mt-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

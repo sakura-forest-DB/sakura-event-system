@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+        .bg-primary { background-color: #2d5a27 !important; }
+        .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+        .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+        footer { background-color: #f8f9fa; margin-top: auto; }
+        .form-check-input:checked { background-color: #2d5a27; border-color: #2d5a27; }
+        .dynamic-form { display: none; }
+        .dynamic-form.active { display: block; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">ボランティア登録</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/apply">イベント申込</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">管理画面</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">イベント申込</h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (errors.length > 0) { %>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <% errors.forEach(error => { %>
+                                        <li><%= error %></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        <% } %>
+
+                        <form method="POST" action="/apply">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">氏名 *</label>
+                                    <input type="text" class="form-control" id="name" name="name" 
+                                           value="<%= formData.name || '' %>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">メールアドレス *</label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           value="<%= formData.email || '' %>" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">電話番号</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                           value="<%= formData.phone || '' %>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="eventId" class="form-label">イベント *</label>
+                                    <!-- デバッグ情報: イベント数 = <%= events.length %> -->
+                                    <select class="form-control" id="eventId" name="eventId" required>
+                                        <option value="">イベントを選択してください</option>
+                                        <% if (events && events.length > 0) { %>
+                                            <% events.forEach(event => { %>
+                                                <option value="<%= event.id %>" <%= formData.eventId === event.id ? 'selected' : '' %>>
+                                                    <%= event.title %> - <%= new Date(event.date).toLocaleDateString('ja-JP') %>
+                                                </option>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <option value="">イベントが見つかりません</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="role" class="form-label">役割 *</label>
+                                    <select class="form-control" id="role" name="role" required>
+                                        <option value="">役割を選択してください</option>
+                                        <option value="保全" <%= formData.role === '保全' ? 'selected' : '' %>>保全</option>
+                                        <option value="出演" <%= formData.role === '出演' ? 'selected' : '' %>>出演</option>
+                                        <option value="出店" <%= formData.role === '出店' ? 'selected' : '' %>>出店</option>
+                                        <option value="運営" <%= formData.role === '運営' ? 'selected' : '' %>>運営</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="freq" class="form-label">参加頻度 *</label>
+                                    <select class="form-control" id="freq" name="freq" required>
+                                        <option value="">参加頻度を選択してください</option>
+                                        <option value="monthly" <%= formData.freq === 'monthly' ? 'selected' : '' %>>月1回程度</option>
+                                        <option value="weekly" <%= formData.freq === 'weekly' ? 'selected' : '' %>>週1回程度</option>
+                                        <option value="ad-hoc" <%= formData.freq === 'ad-hoc' ? 'selected' : '' %>>随時・不定期</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 保全活動の詳細 -->
+                            <div id="保全-form" class="dynamic-form">
+                                <div class="card mb-3">
+                                    <div class="card-header">保全活動の詳細</div>
+                                    <div class="card-body">
+                                        <label class="form-label">参加したい作業</label>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="conservationTasks" value="草刈り" id="task-mowing">
+                                                    <label class="form-check-label" for="task-mowing">草刈り</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="conservationTasks" value="花壇整備" id="task-garden">
+                                                    <label class="form-check-label" for="task-garden">花壇整備</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="conservationTasks" value="清掃" id="task-cleaning">
+                                                    <label class="form-check-label" for="task-cleaning">清掃</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 出演の詳細 -->
+                            <div id="出演-form" class="dynamic-form">
+                                <div class="card mb-3">
+                                    <div class="card-header">出演の詳細</div>
+                                    <div class="card-body">
+                                        <label for="performanceType" class="form-label">演目</label>
+                                        <select class="form-control" id="performanceType" name="performanceType">
+                                            <option value="">演目を選択してください</option>
+                                            <option value="ダンス">ダンス</option>
+                                            <option value="音楽">音楽</option>
+                                            <option value="その他">その他</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 運営の詳細 -->
+                            <div id="運営-form" class="dynamic-form">
+                                <div class="card mb-3">
+                                    <div class="card-header">運営の詳細</div>
+                                    <div class="card-body">
+                                        <label class="form-label">担当したい業務</label>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="operationTasks" value="厨房" id="op-kitchen">
+                                                    <label class="form-check-label" for="op-kitchen">厨房</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="operationTasks" value="ホール" id="op-hall">
+                                                    <label class="form-check-label" for="op-hall">ホール</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="operationTasks" value="PA" id="op-pa">
+                                                    <label class="form-check-label" for="op-pa">PA</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="operationTasks" value="大道具" id="op-props">
+                                                    <label class="form-check-label" for="op-props">大道具</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 出店の詳細 -->
+                            <div id="出店-form" class="dynamic-form">
+                                <div class="card mb-3">
+                                    <div class="card-header">出店の詳細</div>
+                                    <div class="card-body">
+                                        <label for="storeName" class="form-label">出店名</label>
+                                        <input type="text" class="form-control" id="storeName" name="storeName" 
+                                               placeholder="出店名を入力してください">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="availability" class="form-label">参加可能日時</label>
+                                <textarea class="form-control" id="availability" name="availability" rows="2" 
+                                          placeholder="参加可能な曜日や時間帯をお書きください"><%= formData.availability || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">備考・メッセージ</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="3"><%= formData.notes || '' %></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/" class="btn btn-secondary me-md-2">キャンセル</a>
+                                <button type="submit" class="btn btn-primary">申込む</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3 mt-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dynamic form display based on role selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            if (roleSelect) {
+                function toggleRoleForms() {
+                    const selectedRole = roleSelect.value;
+                    document.querySelectorAll('.dynamic-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    if (selectedRole) {
+                        const targetForm = document.getElementById(selectedRole + '-form');
+                        if (targetForm) {
+                            targetForm.classList.add('active');
+                        }
+                    }
+                }
+                roleSelect.addEventListener('change', toggleRoleForms);
+                toggleRoleForms(); // Initial call
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+        .bg-primary { background-color: #2d5a27 !important; }
+        .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+        .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+        footer { background-color: #f8f9fa; margin-top: auto; }
+        .form-section { border-left: 4px solid #2d5a27; padding-left: 15px; margin-bottom: 2rem; }
+        
+        /* 項目名のスタイル（画面表示用） */
+        .form-label {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+        
+        /* 印刷用スタイル */
+        @media print {
+            /* ナビゲーションとフッターを非表示 */
+            nav, footer, .btn, .d-print-none { display: none !important; }
+            
+            /* A4サイズに最適化 */
+            body { 
+                font-size: 10px !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+                padding: 8px !important;
+            }
+            
+            /* コンテナ調整 */
+            .container { max-width: 100% !important; padding: 0 !important; }
+            
+            /* カード調整 */
+            .card { 
+                border: 1px solid #000 !important; 
+                box-shadow: none !important;
+                margin-bottom: 6px !important;
+            }
+            .card-header { 
+                background-color: #f0f0f0 !important; 
+                border-bottom: 1px solid #000 !important;
+                padding: 4px 8px !important;
+            }
+            .card-body { padding: 8px !important; }
+            
+            /* セクション調整 */
+            .form-section { 
+                border-left: 2px solid #000 !important;
+                padding-left: 6px !important;
+                margin-bottom: 10px !important;
+                page-break-inside: avoid;
+            }
+            .form-section h5 { 
+                font-size: 11px !important;
+                margin-bottom: 4px !important;
+                font-weight: bold !important;
+            }
+            
+            /* フォームコントロール調整 */
+            .form-control-plaintext { 
+                border-bottom: 1px solid #ccc !important;
+                padding: 1px 3px !important;
+                margin-bottom: 4px !important;
+                min-height: auto !important;
+                font-size: 10px !important;
+                font-weight: 600 !important;
+            }
+            .form-label { 
+                font-weight: bold !important;
+                font-size: 8px !important;
+                margin-bottom: 1px !important;
+                border: 1px solid #000 !important;
+                padding: 1px 3px !important;
+                background-color: #f0f0f0 !important;
+                display: inline-block !important;
+            }
+            
+            /* 行とカラム調整 */
+            .row { margin: 0 !important; }
+            .col-md-4, .col-md-6, .col-md-8 { 
+                padding: 0 5px !important;
+                width: auto !important;
+                flex: none !important;
+            }
+            .col-md-8 { width: 100% !important; }
+            .col-md-4 { display: none !important; } /* サイドバーを非表示 */
+            
+            /* バッジとテーブル調整 */
+            .badge { 
+                background-color: #f0f0f0 !important; 
+                color: #000 !important;
+                border: 1px solid #000 !important;
+            }
+            .table { font-size: 10px !important; }
+            .table th, .table td { padding: 2px 4px !important; }
+            
+            /* アラート調整 */
+            .alert { 
+                background-color: #f9f9f9 !important;
+                border: 1px solid #ccc !important;
+                padding: 6px !important;
+                font-size: 9px !important;
+            }
+            
+            /* ヘッダー調整 */
+            h2, h4 { 
+                font-size: 14px !important;
+                margin-bottom: 6px !important;
+                page-break-after: avoid;
+            }
+            
+            /* 改ページ制御 */
+            .page-break-before { page-break-before: always; }
+            .page-break-after { page-break-after: always; }
+            .no-page-break { page-break-inside: avoid; }
+        }
+        
+        /* 印刷ボタンのスタイル */
+        .print-btn {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">ボランティア登録</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/apply">イベント申込</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">管理画面</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>出店申込詳細</h2>
+            <div>
+                <button onclick="window.print()" class="btn btn-success me-2 d-print-none">🖨️ 印刷</button>
+                <a href="/admin/stalls" class="btn btn-outline-secondary d-print-none">一覧に戻る</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">🏪 出店申込情報</h4>
+                        <small class="text-muted">申込日: <%= new Date(stall.createdAt).toLocaleDateString('ja-JP') %></small>
+                    </div>
+                    <div class="card-body">
+                        <!-- 基本情報 -->
+                        <div class="form-section">
+                            <h5>📝 基本情報</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">参加団体名</label>
+                                    <div class="form-control-plaintext"><%= stall.groupName %></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">代表者名</label>
+                                    <div class="form-control-plaintext"><%= stall.representative %></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">メールアドレス</label>
+                                    <div class="form-control-plaintext"><%= stall.email %></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">電話番号</label>
+                                    <div class="form-control-plaintext"><%= stall.phone || '未入力' %></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">住所</label>
+                                <div class="form-control-plaintext"><%= stall.address || '未入力' %></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">イベント</label>
+                                <div class="form-control-plaintext">
+                                    <% if (stall.event) { %>
+                                        <strong><%= stall.event.title %></strong>
+                                        <small class="text-muted">（<%= new Date(stall.event.date).toLocaleDateString('ja-JP') %>）</small>
+                                    <% } else { %>
+                                        <span class="text-muted">未選択</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 出店内容 -->
+                        <div class="form-section">
+                            <h5>🏪 出店内容</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">出店内容</label>
+                                    <div class="form-control-plaintext">
+                                        <span class="badge bg-<%= stall.boothType === '飲食' ? 'warning' : 'info' %> fs-6">
+                                            <%= stall.boothType %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">希望出店枠数</label>
+                                    <div class="form-control-plaintext"><%= stall.boothCount || '未入力' %></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">販売品目</label>
+                                <div class="form-control-plaintext"><%= stall.items || '未入力' %></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">価格帯（最低価格）</label>
+                                    <div class="form-control-plaintext"><%= stall.priceRangeMin ? stall.priceRangeMin + '円' : '未入力' %></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">価格帯（最高価格）</label>
+                                    <div class="form-control-plaintext"><%= stall.priceRangeMax ? stall.priceRangeMax + '円' : '未入力' %></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 設営・レンタル -->
+                        <div class="form-section">
+                            <h5>⛺ 設営・レンタル情報</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">テント横幅（m）</label>
+                                    <div class="form-control-plaintext"><%= stall.tentWidth || '未入力' %></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">テント奥行（m）</label>
+                                    <div class="form-control-plaintext"><%= stall.tentDepth || '未入力' %></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">テント高さ（m）</label>
+                                    <div class="form-control-plaintext"><%= stall.tentHeight || '未入力' %></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">レンタルテーブル数</label>
+                                    <div class="form-control-plaintext"><%= stall.rentalTables || '0' %>台</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">レンタル椅子数</label>
+                                    <div class="form-control-plaintext"><%= stall.rentalChairs || '0' %>脚</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 搬入搬出 -->
+                        <div class="form-section">
+                            <h5>🚚 搬入搬出</h5>
+                            <div class="mb-3">
+                                <label class="form-label">搬入・搬出車両台数</label>
+                                <div class="form-control-plaintext"><%= stall.vehicleCount || '0' %>台</div>
+                            </div>
+                        </div>
+
+                        <!-- 連絡事項 -->
+                        <div class="form-section">
+                            <h5>💬 連絡事項</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ご質問・ご要望等</label>
+                                <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 60px; border: 1px solid #dee2e6; padding: 12px; border-radius: 4px; background-color: #f8f9fa;">
+                                    <%= stall.questions || '特になし' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 申込概要</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>申込ID</th>
+                                <td><code><%= stall.id %></code></td>
+                            </tr>
+                            <tr>
+                                <th>申込日時</th>
+                                <td><%= new Date(stall.createdAt).toLocaleString('ja-JP') %></td>
+                            </tr>
+                            <tr>
+                                <th>団体名</th>
+                                <td><%= stall.groupName %></td>
+                            </tr>
+                            <tr>
+                                <th>代表者</th>
+                                <td><%= stall.representative %></td>
+                            </tr>
+                            <tr>
+                                <th>出店内容</th>
+                                <td>
+                                    <span class="badge bg-<%= stall.boothType === '飲食' ? 'warning' : 'info' %>">
+                                        <%= stall.boothType %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% if (stall.event) { %>
+                            <tr>
+                                <th>対象イベント</th>
+                                <td><%= stall.event.title %></td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3 mt-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
