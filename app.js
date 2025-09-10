@@ -37,7 +37,8 @@ const limiter = rateLimit({
   max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 本番では厳しく制限
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  trustProxy: true // Render環境用の設定
 });
 app.use(limiter);
 
@@ -45,7 +46,8 @@ app.use(limiter);
 const formLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10分
   max: 5, // 5回まで
-  message: 'Too many form submissions, please try again later.'
+  message: 'Too many form submissions, please try again later.',
+  trustProxy: true // Render環境用の設定
 });
 
 // Make prisma available in req
