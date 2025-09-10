@@ -168,17 +168,32 @@
             <h2>出店申込詳細</h2>
             <div>
                 <button onclick="window.print()" class="btn btn-success me-2 d-print-none">🖨️ 印刷</button>
+                <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-warning me-2 d-print-none">✏️ 編集</a>
+                <button onclick="confirmDelete('stall', '<%= stall.id %>', '<%= stall.groupName %>')" class="btn btn-danger me-2 d-print-none">🗑️ 削除</button>
                 <a href="/admin/stalls" class="btn btn-outline-secondary d-print-none">一覧に戻る</a>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="mb-0">🏪 出店申込情報</h4>
-                        <small class="text-muted">申込日: <%= new Date(stall.createdAt).toLocaleDateString('ja-JP') %></small>
-                    </div>
+        <!-- タブナビゲーション -->
+        <ul class="nav nav-tabs d-print-none" id="detailTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">📋 申込詳細</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="changes-tab" data-bs-toggle="tab" data-bs-target="#changes" type="button" role="tab">📜 変更履歴</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="detailTabContent">
+            <!-- 申込詳細タブ -->
+            <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0">🏪 出店申込情報</h4>
+                                <small class="text-muted">申込日: <%= new Date(stall.createdAt).toLocaleDateString('ja-JP') %></small>
+                            </div>
                     <div class="card-body">
                         <!-- 基本情報 -->
                         <div class="form-section">
@@ -291,9 +306,19 @@
                         <!-- 搬入搬出 -->
                         <div class="form-section">
                             <h5>🚚 搬入搬出</h5>
-                            <div class="mb-3">
-                                <label class="form-label">搬入・搬出車両台数</label>
-                                <div class="form-control-plaintext"><%= stall.vehicleCount || '0' %>台</div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">車両台数</label>
+                                    <div class="form-control-plaintext"><%= stall.vehicleCount || '0' %>台</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">車両種別</label>
+                                    <div class="form-control-plaintext"><%= stall.vehicleType || '未選択' %></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">車両ナンバー</label>
+                                    <div class="form-control-plaintext"><%= stall.vehicleNumbers || '未入力' %></div>
+                                </div>
                             </div>
                         </div>
 
@@ -304,6 +329,29 @@
                                 <label class="form-label">ご質問・ご要望等</label>
                                 <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 60px; border: 1px solid #dee2e6; padding: 12px; border-radius: 4px; background-color: #f8f9fa;">
                                     <%= stall.questions || '特になし' %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 個人情報同意確認 -->
+                        <div class="form-section">
+                            <h5>🔒 個人情報の取り扱い同意</h5>
+                            <div class="mb-3">
+                                <div class="alert alert-light">
+                                    <div class="form-check mb-2">
+                                        <span class="form-check-input" style="background-color: #d4edda; border-color: #28a745;">✓</span>
+                                        <label class="form-check-label ms-2">
+                                            ご入力いただいた個人情報を、本イベントの運営に必要な範囲で利用することに同意します。（必須）
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <span class="form-check-input" style="background-color: <%= stall.marketingConsent ? '#d4edda' : '#f8f9fa' %>; border-color: <%= stall.marketingConsent ? '#28a745' : '#6c757d' %>;">
+                                            <%= stall.marketingConsent ? '✓' : '✗' %>
+                                        </span>
+                                        <label class="form-check-label ms-2">
+                                            ご入力いただいた個人情報を、今後のイベントのお知らせに利用することに<%= stall.marketingConsent ? '同意します' : '同意しません' %>。（任意）
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -352,41 +400,90 @@
                     </div>
                 </div>
 
-                <!-- 管理メモセクション -->
-                <div class="card mt-3 d-print-none">
-                    <div class="card-header">
-                        <h5 class="mb-0">📝 管理メモ</h5>
                     </div>
-                    <div class="card-body">
-                        <!-- メモ追加フォーム -->
-                        <form method="POST" action="/admin/stalls/<%= stall.id %>/notes" class="mb-3">
-                            <div class="mb-2">
-                                <label for="adminName" class="form-label">記録者名</label>
-                                <input type="text" class="form-control form-control-sm" id="adminName" name="adminName" required>
-                            </div>
-                            <div class="mb-2">
-                                <label for="content" class="form-label">メモ内容</label>
-                                <textarea class="form-control form-control-sm" id="content" name="content" rows="3" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm">追記</button>
-                        </form>
+                </div>
+            </div>
 
-                        <!-- 既存メモ一覧 -->
-                        <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
-                            <hr>
-                            <h6>やりとり履歴</h6>
-                            <% stall.adminNotes.forEach(note => { %>
-                                <div class="border-start border-3 border-info ps-2 mb-2">
-                                    <small class="text-muted">
-                                        <%= new Date(note.createdAt).toLocaleString('ja-JP') %> 
-                                        by <strong><%= note.adminName %></strong>
-                                    </small>
-                                    <div class="small" style="white-space: pre-wrap;"><%= note.content %></div>
-                                </div>
-                            <% }); %>
-                        <% } else { %>
-                            <p class="text-muted small">まだメモはありません</p>
-                        <% } %>
+            <!-- 変更履歴タブ -->
+            <div class="tab-pane fade" id="changes" role="tabpanel" aria-labelledby="changes-tab">
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <!-- 管理メモセクション -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">📝 管理メモ</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- メモ追加フォーム -->
+                                <form method="POST" action="/admin/stalls/<%= stall.id %>/notes" class="mb-3">
+                                    <div class="mb-2">
+                                        <label for="adminName" class="form-label">記録者名</label>
+                                        <input type="text" class="form-control form-control-sm" id="adminName" name="adminName" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="content" class="form-label">メモ内容</label>
+                                        <textarea class="form-control form-control-sm" id="content" name="content" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">追記</button>
+                                </form>
+
+                                <!-- 既存メモ一覧 -->
+                                <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
+                                    <hr>
+                                    <h6>やりとり履歴</h6>
+                                    <% stall.adminNotes.forEach(note => { %>
+                                        <div class="border-start border-3 border-info ps-2 mb-2">
+                                            <small class="text-muted">
+                                                <%= new Date(note.createdAt).toLocaleString('ja-JP') %> 
+                                                by <strong><%= note.adminName %></strong>
+                                            </small>
+                                            <div class="small" style="white-space: pre-wrap;"><%= note.content %></div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <p class="text-muted small">まだメモはありません</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- 変更履歴セクション -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">📜 申込内容変更履歴</h5>
+                            </div>
+                            <div class="card-body">
+                                <% if (stall.changeLogs && stall.changeLogs.length > 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>変更日時</th>
+                                                    <th>編集者</th>
+                                                    <th>項目</th>
+                                                    <th>変更前</th>
+                                                    <th>変更後</th>
+                                                    <th>変更理由</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% stall.changeLogs.forEach(log => { %>
+                                                    <tr>
+                                                        <td><%= new Date(log.createdAt).toLocaleString('ja-JP') %></td>
+                                                        <td><%= log.editor %></td>
+                                                        <td><%= log.field %></td>
+                                                        <td><%= log.oldValue || '未入力' %></td>
+                                                        <td><%= log.newValue || '未入力' %></td>
+                                                        <td><%= log.reason %></td>
+                                                    </tr>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted">まだ変更履歴はありません</p>
+                                <% } %>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -425,5 +522,29 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete(type, id, name) {
+            const typeNames = {
+                'stall': '出店申込',
+                'performer': '出演申込', 
+                'volunteer': 'ボランティア'
+            };
+            
+            if (confirm(`${typeNames[type]}「${name}」を削除しますか？\n\nこの操作は取り消せません。`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/${type}s/${id}/delete`;
+                
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
 </body>
 </html>

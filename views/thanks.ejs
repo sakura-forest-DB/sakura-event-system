@@ -12,6 +12,88 @@
         .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
         footer { background-color: #f8f9fa; margin-top: auto; }
         .success-icon { font-size: 4rem; color: #28a745; }
+        .form-section { border-left: 4px solid #2d5a27; padding-left: 15px; margin-bottom: 2rem; }
+        
+        .form-label {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+        
+        /* 印刷用スタイル */
+        @media print {
+            nav, footer, .btn, .d-print-none { display: none !important; }
+            
+            body { 
+                font-size: 12px !important;
+                line-height: 1.3 !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
+            
+            .container { max-width: 100% !important; padding: 0 !important; }
+            
+            .card { 
+                border: 1px solid #000 !important; 
+                box-shadow: none !important;
+                margin-bottom: 10px !important;
+            }
+            .card-header { 
+                background-color: #f0f0f0 !important; 
+                border-bottom: 1px solid #000 !important;
+                padding: 8px !important;
+            }
+            .card-body { padding: 10px !important; }
+            
+            .form-section { 
+                border-left: 2px solid #000 !important;
+                padding-left: 8px !important;
+                margin-bottom: 15px !important;
+                page-break-inside: avoid;
+            }
+            .form-section h5 { 
+                font-size: 14px !important;
+                margin-bottom: 8px !important;
+                font-weight: bold !important;
+            }
+            
+            .form-control-plaintext { 
+                border-bottom: 1px solid #ccc !important;
+                padding: 2px 4px !important;
+                margin-bottom: 6px !important;
+                min-height: auto !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+            .form-label { 
+                font-weight: bold !important;
+                font-size: 10px !important;
+                margin-bottom: 2px !important;
+                border: 1px solid #000 !important;
+                padding: 2px 4px !important;
+                background-color: #f0f0f0 !important;
+                display: inline-block !important;
+            }
+            
+            .badge { 
+                background-color: #f0f0f0 !important; 
+                color: #000 !important;
+                border: 1px solid #000 !important;
+            }
+            
+            h2, h4 { 
+                font-size: 16px !important;
+                margin-bottom: 8px !important;
+                page-break-after: avoid;
+            }
+            
+            .success-icon { font-size: 2rem !important; }
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -44,57 +126,319 @@
 
     <main class="container my-5 flex-grow-1">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <div class="success-icon mb-4">✅</div>
-                        <h2 class="text-success mb-4">申込完了</h2>
-                        <p class="lead">
-                            <% if (typeof type !== 'undefined') { %>
-                                <% if (type === 'stall') { %>
-                                    🏪 出店申込
-                                <% } else if (type === 'performer') { %>
-                                    🎭 出演申込
-                                <% } %>
+            <div class="col-md-10">
+                <!-- 完了メッセージ（画面表示のみ） -->
+                <div class="text-center mb-4 d-print-none">
+                    <div class="success-icon mb-3">✅</div>
+                    <h2 class="text-success mb-3">申込完了</h2>
+                    <p class="lead">
+                        <% if (typeof type !== 'undefined') { %>
+                            <% if (type === 'stall') { %>
+                                🏪 出店申込
+                            <% } else if (type === 'performer') { %>
+                                🎭 出演申込
                             <% } %>
-                            ありがとうございました
-                        </p>
-                        
-                        <div class="alert alert-success text-start" role="alert">
-                            <h6 class="alert-heading">申込内容</h6>
-                            <% if (typeof application !== 'undefined' && application) { %>
-                                <p><strong>団体名：</strong> <%= application.groupName %></p>
-                                <p><strong>代表者名：</strong> <%= application.representative %></p>
-                                <p><strong>メールアドレス：</strong> <%= application.email %></p>
-                                <% if (typeof event !== 'undefined' && event) { %>
-                                    <p><strong>イベント：</strong> <%= event.title %> (<%= new Date(event.date).toLocaleDateString('ja-JP') %>)</p>
-                                <% } %>
-                                <% if (type === 'stall' && application.boothType) { %>
-                                    <p><strong>出店内容：</strong> <%= application.boothType %></p>
-                                <% } %>
-                                <% if (type === 'performer' && application.performance) { %>
-                                    <p><strong>出演内容：</strong> <%= application.performance.length > 50 ? application.performance.substring(0, 50) + '...' : application.performance %></p>
-                                <% } %>
-                                <hr>
-                                <p class="mb-0"><strong>申込日時：</strong> <%= new Date(application.createdAt).toLocaleString('ja-JP') %></p>
-                            <% } %>
+                        <% } %>
+                        ありがとうございました
+                    </p>
+                    <% if (typeof isPreview !== 'undefined' && isPreview) { %>
+                        <div class="alert alert-secondary">
+                            <strong>🔍 プレビューモード</strong><br>
+                            これはレイアウト確認用の画面です。実際の申込完了画面と同じデザインで表示されています。
                         </div>
-                        
-                        <div class="alert alert-info" role="alert">
-                            <h6 class="alert-heading">今後の流れ</h6>
-                            <ul class="text-start mb-0">
-                                <li>申込内容を確認の上、菊名桜山公園愛護会担当者よりご連絡いたします</li>
-                                <li>詳細な打合せ等は別途調整させていただきます</li>
-                                <li>ご質問がございましたら、下記メールアドレスまでお気軽にお問い合わせください<br>
-                                    <strong>📧 kikuna.sakurayama@example.com</strong></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <a href="/" class="btn btn-primary me-2">ホームに戻る</a>
-                            <a href="/apply" class="btn btn-outline-secondary">申込画面に戻る</a>
-                        </div>
+                    <% } else { %>
+                        <button onclick="window.print()" class="btn btn-success btn-lg me-3">🖨️ 申込控えを印刷</button>
+                        <small class="text-muted d-block mt-2">↑ この申込内容を印刷して控えとして保存してください</small>
+                    <% } %>
+                </div>
+
+                <!-- 重要な注意事項 -->
+                <div class="alert alert-warning" role="alert" style="font-size:1.1em;">
+                    ⚠️ <strong>ご注意ください</strong><br>
+                    この申込は <strong>仮受付</strong> です。正式な決定ではありません。<br>
+                    後日、主催者（菊名桜山公園愛護会）からの連絡をもって確定となります。
+                </div>
+
+                <% if (typeof isPreview !== 'undefined' && isPreview) { %>
+                    <div class="alert alert-info" role="alert" style="font-size:1.1em;">
+                        📝 <strong>申込控えの保存をお願いします</strong><br>
+                        印刷ボタンで申込内容を印刷（またはスクリーンショット）して控えとして保存してください。<br>
+                        （控えがないと後日の確認が難しくなる場合があります）
                     </div>
+                <% } else { %>
+                    <div class="alert alert-info" role="alert" style="font-size:1.1em;">
+                        📝 <strong>申込控えの保存をお願いします</strong><br>
+                        上記の印刷ボタンで申込内容を印刷（またはスクリーンショット）して控えとして保存してください。<br>
+                        （控えがないと後日の確認が難しくなる場合があります）
+                    </div>
+                <% } %>
+
+                <!-- 申込内容詳細（画面・印刷共通） -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <% if (type === 'stall') { %>
+                                🏪 出店申込控え
+                            <% } else if (type === 'performer') { %>
+                                🎭 出演申込控え
+                            <% } %>
+                        </h4>
+                        <small class="text-muted">申込日: <%= application ? new Date(application.createdAt).toLocaleDateString('ja-JP') : '' %></small>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof application !== 'undefined' && application) { %>
+                            <!-- 基本情報 -->
+                            <div class="form-section">
+                                <h5>📝 基本情報</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">参加団体名</label>
+                                        <div class="form-control-plaintext"><%= application.groupName %></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">代表者名</label>
+                                        <div class="form-control-plaintext"><%= application.representative %></div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">メールアドレス</label>
+                                        <div class="form-control-plaintext"><%= application.email %></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">電話番号</label>
+                                        <div class="form-control-plaintext"><%= application.phone || '未入力' %></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">住所</label>
+                                    <div class="form-control-plaintext"><%= application.address || '未入力' %></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">イベント</label>
+                                    <div class="form-control-plaintext">
+                                        <% if (typeof event !== 'undefined' && event) { %>
+                                            <strong><%= event.title %></strong>
+                                            <small class="text-muted">（<%= new Date(event.date).toLocaleDateString('ja-JP') %>）</small>
+                                        <% } else { %>
+                                            <span class="text-muted">未選択</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <% if (type === 'stall') { %>
+                                <!-- 出店内容 -->
+                                <div class="form-section">
+                                    <h5>🏪 出店内容</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">出店内容</label>
+                                            <div class="form-control-plaintext">
+                                                <span class="badge bg-<%= application.boothType === '飲食' ? 'warning' : 'info' %> fs-6">
+                                                    <%= application.boothType %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">希望出店枠数</label>
+                                            <div class="form-control-plaintext"><%= application.boothCount || '未入力' %></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">販売品目</label>
+                                        <div class="form-control-plaintext"><%= application.items || '未入力' %></div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">価格帯（最低価格）</label>
+                                            <div class="form-control-plaintext"><%= application.priceRangeMin ? application.priceRangeMin + '円' : '未入力' %></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">価格帯（最高価格）</label>
+                                            <div class="form-control-plaintext"><%= application.priceRangeMax ? application.priceRangeMax + '円' : '未入力' %></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 設営・レンタル -->
+                                <div class="form-section">
+                                    <h5>⛺ 設営・レンタル情報</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">テント横幅（m）</label>
+                                            <div class="form-control-plaintext"><%= application.tentWidth || '未入力' %></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">テント奥行（m）</label>
+                                            <div class="form-control-plaintext"><%= application.tentDepth || '未入力' %></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">テント高さ（m）</label>
+                                            <div class="form-control-plaintext"><%= application.tentHeight || '未入力' %></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">レンタルテーブル数</label>
+                                            <div class="form-control-plaintext"><%= application.rentalTables || '0' %>台</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">レンタル椅子数</label>
+                                            <div class="form-control-plaintext"><%= application.rentalChairs || '0' %>脚</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 搬入搬出 -->
+                                <div class="form-section">
+                                    <h5>🚚 搬入搬出</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">車両台数</label>
+                                            <div class="form-control-plaintext"><%= application.vehicleCount || '0' %>台</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">車両種別</label>
+                                            <div class="form-control-plaintext"><%= application.vehicleType || '未選択' %></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">車両ナンバー</label>
+                                            <div class="form-control-plaintext"><%= application.vehicleNumbers || '未入力' %></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <% } else if (type === 'performer') { %>
+                                <!-- 出演内容 -->
+                                <div class="form-section">
+                                    <h5>🎭 出演内容</h5>
+                                    <div class="mb-3">
+                                        <label class="form-label">出演内容</label>
+                                        <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 60px; border: 1px solid #dee2e6; padding: 12px; border-radius: 4px; background-color: #f8f9fa;">
+                                            <%= application.performance %>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">出演者数</label>
+                                            <div class="form-control-plaintext"><%= application.performerCount || '未入力' %>人</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">希望出演枠数</label>
+                                            <div class="form-control-plaintext"><%= application.slotCount || '未入力' %>枠</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 音響・機材 -->
+                                <div class="form-section">
+                                    <h5>🔊 レンタル拡声装置</h5>
+                                    <div class="mb-3">
+                                        <label class="form-label">音源再生利用</label>
+                                        <div class="form-control-plaintext"><%= application.audioSourceOnly || '0' %>枠分</div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">音源拡声装置＋マイク１本セット</label>
+                                            <div class="form-control-plaintext"><%= application.rentalAmp || '0' %>枠</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">追加マイク本数</label>
+                                            <div class="form-control-plaintext"><%= application.rentalMic || '0' %>本</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 搬入搬出 -->
+                                <div class="form-section">
+                                    <h5>🚚 搬入搬出</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">車両台数</label>
+                                            <div class="form-control-plaintext"><%= application.vehicleCount || '0' %>台</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">車両ナンバー</label>
+                                            <div class="form-control-plaintext"><%= application.vehicleNumbers || '未入力' %></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- 連絡事項 -->
+                            <div class="form-section">
+                                <h5>💬 連絡事項</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">ご質問・ご要望等</label>
+                                    <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 60px; border: 1px solid #dee2e6; padding: 12px; border-radius: 4px; background-color: #f8f9fa;">
+                                        <%= application.questions || '特になし' %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 個人情報同意確認 -->
+                            <div class="form-section">
+                                <h5>🔒 個人情報の取り扱い同意</h5>
+                                <div class="mb-3">
+                                    <div class="alert alert-light">
+                                        <div class="form-check mb-2">
+                                            <span class="form-check-input" style="background-color: #d4edda; border-color: #28a745;">✓</span>
+                                            <label class="form-check-label ms-2">
+                                                ご入力いただいた個人情報を、本イベントの運営に必要な範囲で利用することに同意します。（必須）
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <span class="form-check-input" style="background-color: <%= application.marketingConsent ? '#d4edda' : '#f8f9fa' %>; border-color: <%= application.marketingConsent ? '#28a745' : '#6c757d' %>;">
+                                                <%= application.marketingConsent ? '✓' : '✗' %>
+                                            </span>
+                                            <label class="form-check-label ms-2">
+                                                ご入力いただいた個人情報を、今後のイベントのお知らせに利用することに<%= application.marketingConsent ? '同意します' : '同意しません' %>。（任意）
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 申込情報 -->
+                            <div class="form-section">
+                                <h5>📊 申込情報</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">申込日時</label>
+                                    <div class="form-control-plaintext"><%= new Date(application.createdAt).toLocaleString('ja-JP') %></div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <!-- 今後の流れ（画面表示のみ） -->
+                <div class="alert alert-info d-print-none" role="alert">
+                    <h6 class="alert-heading">今後の流れ</h6>
+                    <ul class="text-start mb-0">
+                        <li>申込内容を確認の上、菊名桜山公園愛護会担当者よりご連絡いたします</li>
+                        <li>詳細な打合せ等は別途調整させていただきます</li>
+                        <li>ご質問がございましたら、下記メールアドレスまでお気軽にお問い合わせください<br>
+                            <strong>📧 osawa-s@nifty.com</strong></li>
+                    </ul>
+                </div>
+                
+                <!-- ナビゲーションボタン（画面表示のみ） -->
+                <div class="mt-4 text-center d-print-none">
+                    <% if (typeof isPreview !== 'undefined' && isPreview) { %>
+                        <button class="btn btn-secondary" onclick="window.close()">プレビューを閉じる</button>
+                    <% } else { %>
+                        <a href="/" class="btn btn-primary me-2">ホームに戻る</a>
+                        <a href="/apply" class="btn btn-outline-secondary">申込画面に戻る</a>
+                    <% } %>
                 </div>
             </div>
         </div>

@@ -95,9 +95,9 @@
                                                value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">電話番号</label>
+                                        <label for="phone" class="form-label">電話番号 <span class="required">*</span></label>
                                         <input type="tel" class="form-control" id="phone" name="phone" 
-                                               value="<%= typeof formData !== 'undefined' ? formData.phone || '' : '' %>">
+                                               value="<%= typeof formData !== 'undefined' ? formData.phone || '' : '' %>" required>
                                     </div>
                                 </div>
 
@@ -147,6 +147,7 @@
                                         <label for="boothCount" class="form-label">希望出店枠数</label>
                                         <input type="number" class="form-control" id="boothCount" name="boothCount" min="1" max="5"
                                                value="<%= typeof formData !== 'undefined' ? formData.boothCount || '' : '' %>">
+                                        <div class="form-text text-muted">１枠：間口:約２m 奥行き:約２m</div>
                                     </div>
                                 </div>
 
@@ -179,6 +180,9 @@
                             <!-- 設営・レンタル -->
                             <div class="form-section">
                                 <h5>⛺ 設営・レンタル情報</h5>
+                                <div class="alert alert-info mb-3">
+                                    <strong>💡 テントを設置される方はサイズをご記入ください</strong>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label for="tentWidth" class="form-label">テント横幅（m）</label>
@@ -197,6 +201,14 @@
                                     </div>
                                 </div>
 
+                                <div class="alert alert-info mb-3">
+                                    <strong>💡 テーブル・椅子をご利用になる方は以下にご記入ください</strong>
+                                    <div class="ps-3 mt-2">
+                                        台数に限りがありますので、お早めにご予約ください<br>
+                                        ・樹脂天板テーブル 60x180cm：８００円 /１台（レンタル可能数：10台）<br>
+                                        ・折り畳み椅子：２００円/１脚（レンタル可能数：30脚）
+                                    </div>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="rentalTables" class="form-label">レンタルテーブル数</label>
@@ -214,11 +226,33 @@
                             <!-- 搬入搬出 -->
                             <div class="form-section">
                                 <h5>🚚 搬入搬出</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="vehicleCount" class="form-label">車両台数</label>
+                                        <input type="number" class="form-control" id="vehicleCount" name="vehicleCount" min="0"
+                                               value="<%= typeof formData !== 'undefined' ? formData.vehicleCount || '' : '' %>">
+                                        <div class="form-text">（２台以上の場合は要相談）</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="vehicleType" class="form-label">車両種別</label>
+                                        <select class="form-control" id="vehicleType" name="vehicleType">
+                                            <option value="">選択してください</option>
+                                            <option value="キッチンカー" <%= (typeof formData !== 'undefined' && formData.vehicleType === 'キッチンカー') ? 'selected' : '' %>>キッチンカー（会場内駐車）</option>
+                                            <option value="搬入・搬出車" <%= (typeof formData !== 'undefined' && formData.vehicleType === '搬入・搬出車') ? 'selected' : '' %>>搬入・搬出車（駐車スペースに駐車）</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="mb-3">
-                                    <label for="vehicleCount" class="form-label">搬入・搬出車両台数</label>
-                                    <input type="number" class="form-control" id="vehicleCount" name="vehicleCount" min="0"
-                                           value="<%= typeof formData !== 'undefined' ? formData.vehicleCount || '' : '' %>">
-                                    <div class="form-text">車両での搬入・搬出を予定している台数をご記入ください</div>
+                                    <label for="vehicleNumbers" class="form-label">車両ナンバー</label>
+                                    <input type="text" class="form-control" id="vehicleNumbers" name="vehicleNumbers" 
+                                           value="<%= typeof formData !== 'undefined' ? formData.vehicleNumbers || '' : '' %>"
+                                           placeholder="例：横浜123あ4567">
+                                    <div class="form-text">複数台の場合はカンマ区切りで入力</div>
+                                </div>
+                                
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ 注意事項:</strong> 開催時間内は車両の移動はできません
                                 </div>
                             </div>
 
@@ -229,6 +263,35 @@
                                     <label for="questions" class="form-label">ご質問・ご要望等</label>
                                     <textarea class="form-control" id="questions" name="questions" rows="4"
                                               placeholder="特別な配慮が必要な事項、ご質問等がございましたらご記入ください"><%= typeof formData !== 'undefined' ? formData.questions || '' : '' %></textarea>
+                                </div>
+                            </div>
+
+                            <!-- 個人情報の取り扱い -->
+                            <div class="form-section">
+                                <h5>🔒 個人情報の取り扱いについて</h5>
+                                <div class="mb-3">
+                                    <div class="alert alert-light">
+                                        <ol class="mb-3">
+                                            <li>ご入力いただいた個人情報は、本イベントの運営に必要な範囲で利用します。</li>
+                                            <li>また、今後の関連イベントや活動のお知らせをお送りするために利用させていただく場合があります。</li>
+                                            <li>ご本人の同意なく、第三者に提供することはありません。</li>
+                                            <li>個人情報は、主催者が責任を持って管理し、不要になった場合は適切に処理します。</li>
+                                        </ol>
+                                        
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="privacyConsent" name="privacyConsent" required>
+                                            <label class="form-check-label" for="privacyConsent">
+                                                ご入力いただいた個人情報を、本イベントの運営に必要な範囲で利用することに同意します。<span class="text-danger">（必須）</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="marketingConsent" name="marketingConsent">
+                                            <label class="form-check-label" for="marketingConsent">
+                                                ご入力いただいた個人情報を、今後のイベントのお知らせに利用することに同意します。（任意）
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

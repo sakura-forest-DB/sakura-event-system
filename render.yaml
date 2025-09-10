@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: kikuna-event-system
+    env: node
+    plan: free
+    buildCommand: npm install && npm run db:generate && npx prisma db push && npm run setup:render
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        value: training2024
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kikuna-db
+          property: connectionString
+
+databases:
+  - name: kikuna-db
+    plan: free
+    databaseName: kikuna_events
+    user: admin

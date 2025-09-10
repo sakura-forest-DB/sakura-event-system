@@ -97,11 +97,15 @@
                     Sakura Forest Community<br>
                     <span class="fs-4">ボランティア登録・イベント参加申し込みページ</span></h1>
                     <p class="lead">地域の自然と文化を守り、育てる活動にご参加ください</p>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
                         <a href="/register" class="btn btn-volunteer btn-lg me-md-2">🙋 ボランティア登録</a>
                         <a href="/apply/stall" class="btn btn-stall btn-lg me-md-2">🏪 出店申込</a>
                         <a href="/apply/performer" class="btn btn-performer btn-lg me-md-2">🎭 出演申込</a>
                         <a href="/apply" class="btn btn-view-all btn-lg">全て見る</a>
+                    </div>
+                    <div class="text-start">
+                        <small class="text-muted">※ボランティア登録者向け</small><br>
+                        <a href="/status" class="btn btn-outline-secondary btn-lg">🔍 ボランティア登録確認</a>
                     </div>
                 </div>
 
@@ -190,7 +194,7 @@
                                 <div class="mb-3">
                                     <h6><%= event.title %></h6>
                                     <p class="small text-muted mb-1">
-                                        <strong>日時:</strong> <%= new Date(event.date).toLocaleDateString('ja-JP') %><br>
+                                        <strong>日時:</strong> <%= new Date(event.date).toLocaleDateString('ja-JP') %>（<%= new Date(event.date).toLocaleDateString('ja-JP', { weekday: 'short' }) %>）<br>
                                         <strong>場所:</strong> <%= event.location %>
                                         <% if (!event.canApply && event.applicationStartMessage) { %>
                                             <br><span class="text-info"><%= event.applicationStartMessage %></span>

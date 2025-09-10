@@ -52,6 +52,55 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 出店申込フォーム表示（修正用）
+router.post('/edit', async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    
+    // 募集中のイベント取得（指定された3つのイベントのみ）
+    const currentDate = new Date();
+    const events = await prisma.event.findMany({
+      where: {
+        AND: [
+          {
+            date: {
+              gte: currentDate
+            }
+          },
+          {
+            title: {
+              in: ['🌸桜まつり', '🍁感謝祭', '🎄Forest Christmas']
+            }
+          }
+        ]
+      },
+      orderBy: { date: 'asc' }
+    });
+
+    // 申込可能かどうかを各イベントに追加
+    const eventsWithApplicationStatus = events.map(event => ({
+      ...event,
+      canApply: !event.applicationStartDate || event.applicationStartDate <= currentDate,
+      applicationStartMessage: event.applicationStartDate && event.applicationStartDate > currentDate 
+        ? `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
+        : null
+    }));
+
+    res.render('apply_stall', {
+      title: '出店申込',
+      events: eventsWithApplicationStatus,
+      errors: [],
+      formData: req.body
+    });
+  } catch (error) {
+    console.error('Apply stall edit error:', error);
+    res.status(500).render('error', {
+      title: 'エラー',
+      message: 'イベント情報の取得中にエラーが発生しました'
+    });
+  }
+});
+
 // 出店申込処理
 router.post('/', async (req, res) => {
   try {
@@ -72,6 +121,8 @@ router.post('/', async (req, res) => {
       tentDepth,
       tentHeight,
       vehicleCount,
+      vehicleType,
+      vehicleNumbers,
       rentalTables,
       rentalChairs,
       questions
@@ -86,8 +137,10 @@ router.post('/', async (req, res) => {
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.push('有効なメールアドレスを入力してください');
     }
+    if (!phone) errors.push('電話番号は必須です');
     if (!eventId) errors.push('イベントを選択してください');
     if (!boothType) errors.push('出店内容を選択してください');
+    if (!privacyConsent) errors.push('個人情報の利用について同意が必要です');
 
     // イベントの申込開始日チェック
     if (eventId) {
@@ -129,6 +182,59 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // エラーがない場合は確認画面を表示
+    const event = await prisma.event.findUnique({
+      where: { id: eventId }
+    });
+
+    res.render('apply_stall_confirm', {
+      title: '出店申込内容確認',
+      formData: req.body,
+      event
+    });
+
+  } catch (error) {
+    console.error('Apply stall error:', error);
+    res.status(500).render('error', {
+      title: 'エラー',
+      message: '申込中にエラーが発生しました'
+    });
+  }
+});
+
+// 出店申込最終送信処理
+router.post('/submit', async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const {
+      groupName,
+      representative,
+      address,
+      email,
+      phone,
+      eventId,
+      boothType,
+      items,
+      priceRangeMin,
+      priceRangeMax,
+      boothCount,
+      tentWidth,
+      tentDepth,
+      tentHeight,
+      vehicleCount,
+      vehicleType,
+      vehicleNumbers,
+      rentalTables,
+      rentalChairs,
+      questions,
+      privacyConsent,
+      marketingConsent
+    } = req.body;
+
+    // 初回申込スナップショット用データ
+    const originalPayload = JSON.stringify(req.body);
+    const submittedAt = new Date();
+
     // 出店申込作成
     const stallApplication = await prisma.stallApplication.create({
       data: {
@@ -147,9 +253,15 @@ router.post('/', async (req, res) => {
         tentDepth: tentDepth ? parseFloat(tentDepth) : null,
         tentHeight: tentHeight ? parseFloat(tentHeight) : null,
         vehicleCount: vehicleCount ? parseInt(vehicleCount) : null,
+        vehicleType: vehicleType || null,
+        vehicleNumbers: vehicleNumbers || null,
         rentalTables: rentalTables ? parseInt(rentalTables) : null,
         rentalChairs: rentalChairs ? parseInt(rentalChairs) : null,
-        questions: questions || null
+        questions: questions || null,
+        privacyConsent: privacyConsent === 'on',
+        marketingConsent: marketingConsent === 'on',
+        originalPayload,
+        originalSubmittedAt: submittedAt
       }
     });
 
@@ -166,10 +278,10 @@ router.post('/', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Apply stall error:', error);
+    console.error('Apply stall submit error:', error);
     res.status(500).render('error', {
       title: 'エラー',
-      message: '申込中にエラーが発生しました'
+      message: '申込送信中にエラーが発生しました'
     });
   }
 });

@@ -5,28 +5,46 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "dotenv -e .env.development -- nodemon app.js",
     "start": "node app.js",
-    "seed": "node scripts/seed.js",
-    "test": "node test/test.js",
+    "start:local-prod": "dotenv -e .env.production -- node app.js",
+    "training": "dotenv -e .env.training -- nodemon app.js",
+    "seed": "dotenv -e .env.development -- node scripts/seed.js",
+    "seed:training": "dotenv -e .env.training -- node scripts/training-seed.js",
+    "test": "dotenv -e .env.development -- node test/test.js",
+    "db:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "db:migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "db:migrate:training": "dotenv -e .env.training -- npx prisma migrate dev",
+    "db:generate": "npx prisma generate",
+    "db:studio:dev": "dotenv -e .env.development -- npx prisma studio",
+    "db:studio:prod": "dotenv -e .env.production -- npx prisma studio",
+    "db:studio:training": "dotenv -e .env.training -- npx prisma studio",
+    "setup:render": "node scripts/render-setup.js",
     "cc": "claude"
   },
-  "keywords": ["volunteer", "management", "event"],
+  "keywords": [
+    "volunteer",
+    "management",
+    "event"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/claude-code": "^1.0.88",
     "@prisma/client": "^5.0.0",
-    "express": "^4.18.2",
-    "ejs": "^3.1.9",
-    "express-session": "^1.17.3",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.17.3",
+    "helmet": "^8.1.0",
     "lunar-javascript": "^1.7.3"
   },
   "devDependencies": {
+    "dotenv-cli": "^10.0.0",
     "nodemon": "^3.0.1",
     "prisma": "^5.0.0"
   }

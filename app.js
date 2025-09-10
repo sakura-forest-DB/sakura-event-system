@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 // Import routes
 import homeRoutes from './routes/home.js';
@@ -12,6 +14,7 @@ import registerRoutes from './routes/register.js';
 import applyRoutes from './routes/apply.js';
 import applyStallRoutes from './routes/apply-stall.js';
 import applyPerformerRoutes from './routes/apply-performer.js';
+import statusRoutes from './routes/status.js';
 import adminRoutes from './routes/admin.js';
 
 dotenv.config();
@@ -22,6 +25,28 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
+
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false // 本番でCSP有効
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 本番では厳しく制限
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use(limiter);
+
+// Form submission rate limiting (より厳しい制限)
+const formLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10分
+  max: 5, // 5回まで
+  message: 'Too many form submissions, please try again later.'
+});
 
 // Make prisma available in req
 app.use((req, res, next) => {
@@ -43,15 +68,20 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // set to true in production with HTTPS
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // HTTPS必須（本番環境）
+    httpOnly: true, // XSS対策
+    maxAge: 24 * 60 * 60 * 1000 // 24時間
+  }
 }));
 
 // Routes
 app.use('/', homeRoutes);
-app.use('/register', registerRoutes);
-app.use('/apply', applyRoutes);
-app.use('/apply/stall', applyStallRoutes);
-app.use('/apply/performer', applyPerformerRoutes);
+app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
+app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
+app.use('/apply/stall', formLimiter, applyStallRoutes); // フォーム送信制限
+app.use('/apply/performer', formLimiter, applyPerformerRoutes); // フォーム送信制限
+app.use('/status', statusRoutes);
 app.use('/admin', adminRoutes);
 
 // Error handling

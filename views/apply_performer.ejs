@@ -102,9 +102,9 @@
                                                value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">電話番号</label>
+                                        <label for="phone" class="form-label">電話番号 <span class="required">*</span></label>
                                         <input type="tel" class="form-control" id="phone" name="phone" 
-                                               value="<%= typeof formData !== 'undefined' ? formData.phone || '' : '' %>">
+                                               value="<%= typeof formData !== 'undefined' ? formData.phone || '' : '' %>" required>
                                     </div>
                                 </div>
 
@@ -158,46 +158,61 @@
                                         <label for="slotCount" class="form-label">希望出演枠数</label>
                                         <input type="number" class="form-control" id="slotCount" name="slotCount" min="1" max="3"
                                                value="<%= typeof formData !== 'undefined' ? formData.slotCount || '' : '' %>">
-                                        <div class="form-text">1枠約15分程度</div>
+                                        <div class="form-text">（１枠：３０分 準備・撤収時間を含む）</div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- 音響・機材 -->
                             <div class="form-section">
-                                <h5>🔊 音響・機材レンタル</h5>
+                                <h5>🔊 レンタル拡声装置</h5>
+                                <div class="form-text text-muted mb-3">（ご利用になる方は以下にご記入ください）</div>
+                                
+                                <div class="mb-3">
+                                    <label for="audioSourceOnly" class="form-label">音源再生利用</label>
+                                    <input type="number" class="form-control" id="audioSourceOnly" name="audioSourceOnly" min="0"
+                                           value="<%= typeof formData !== 'undefined' ? formData.audioSourceOnly || '' : '' %>">
+                                    <div class="form-text">枠分（音源再生装置はご持参ください）</div>
+                                </div>
+                                
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="rentalAmp" class="form-label">音源拡声装置レンタル希望数</label>
+                                        <label for="rentalAmp" class="form-label">音源拡声装置＋マイク１本セット</label>
                                         <input type="number" class="form-control" id="rentalAmp" name="rentalAmp" min="0"
                                                value="<%= typeof formData !== 'undefined' ? formData.rentalAmp || '' : '' %>">
-                                        <div class="form-text">スピーカー・アンプセット</div>
+                                        <div class="form-text">５００円 /１枠</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="rentalMic" class="form-label">追加マイク本数</label>
                                         <input type="number" class="form-control" id="rentalMic" name="rentalMic" min="0"
                                                value="<%= typeof formData !== 'undefined' ? formData.rentalMic || '' : '' %>">
-                                        <div class="form-text">基本マイク以外の追加分</div>
+                                        <div class="form-text">追加マイク１本：１００円 /１枠（レンタル可能数：２本）</div>
                                     </div>
                                 </div>
 
-                                <div class="alert alert-info">
-                                    <small>
-                                        <strong>機材について：</strong><br>
-                                        基本的な音響機材（マイク1本、アンプ1台）は無料で提供いたします。<br>
-                                        追加機材については事前にご相談ください。
-                                    </small>
-                                </div>
                             </div>
 
                             <!-- 搬入搬出 -->
                             <div class="form-section">
                                 <h5>🚚 搬入搬出</h5>
-                                <div class="mb-3">
-                                    <label for="vehicleCount" class="form-label">搬入・搬出車両台数</label>
-                                    <input type="number" class="form-control" id="vehicleCount" name="vehicleCount" min="0"
-                                           value="<%= typeof formData !== 'undefined' ? formData.vehicleCount || '' : '' %>">
-                                    <div class="form-text">楽器・機材等の搬入・搬出を予定している車両台数</div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="vehicleCount" class="form-label">車両台数</label>
+                                        <input type="number" class="form-control" id="vehicleCount" name="vehicleCount" min="0"
+                                               value="<%= typeof formData !== 'undefined' ? formData.vehicleCount || '' : '' %>">
+                                        <div class="form-text">（２台以上の場合は要相談）</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="vehicleNumbers" class="form-label">車両ナンバー</label>
+                                        <input type="text" class="form-control" id="vehicleNumbers" name="vehicleNumbers" 
+                                               value="<%= typeof formData !== 'undefined' ? formData.vehicleNumbers || '' : '' %>"
+                                               placeholder="例：横浜123あ4567">
+                                        <div class="form-text">複数台の場合はカンマ区切りで入力</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ 注意事項:</strong> 開催時間内は車両の移動はできません
                                 </div>
                             </div>
 
@@ -208,6 +223,35 @@
                                     <label for="questions" class="form-label">ご質問・ご要望等</label>
                                     <textarea class="form-control" id="questions" name="questions" rows="4"
                                               placeholder="電源の確保、特別な機材、舞台設営等でご要望がございましたらご記入ください"><%= typeof formData !== 'undefined' ? formData.questions || '' : '' %></textarea>
+                                </div>
+                            </div>
+
+                            <!-- 個人情報の取り扱い -->
+                            <div class="form-section">
+                                <h5>🔒 個人情報の取り扱いについて</h5>
+                                <div class="mb-3">
+                                    <div class="alert alert-light">
+                                        <ol class="mb-3">
+                                            <li>ご入力いただいた個人情報は、本イベントの運営に必要な範囲で利用します。</li>
+                                            <li>また、今後の関連イベントや活動のお知らせをお送りするために利用させていただく場合があります。</li>
+                                            <li>ご本人の同意なく、第三者に提供することはありません。</li>
+                                            <li>個人情報は、主催者が責任を持って管理し、不要になった場合は適切に処理します。</li>
+                                        </ol>
+                                        
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="privacyConsent" name="privacyConsent" required>
+                                            <label class="form-check-label" for="privacyConsent">
+                                                ご入力いただいた個人情報を、本イベントの運営に必要な範囲で利用することに同意します。<span class="text-danger">（必須）</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="marketingConsent" name="marketingConsent">
+                                            <label class="form-check-label" for="marketingConsent">
+                                                ご入力いただいた個人情報を、今後のイベントのお知らせに利用することに同意します。（任意）
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

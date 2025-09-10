@@ -10,7 +10,16 @@ router.get('/', (req, res) => {
   });
 });
 
-// 個人登録処理
+// ボランティア登録フォーム表示（修正用）
+router.post('/edit', async (req, res) => {
+  res.render('register', {
+    title: 'ボランティア登録',
+    errors: [],
+    formData: req.body
+  });
+});
+
+// ボランティア登録処理（確認画面表示）
 router.post('/', async (req, res) => {
   try {
     const prisma = req.prisma;
@@ -60,6 +69,39 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // エラーがない場合は確認画面を表示
+    res.render('register_confirm', {
+      title: 'ボランティア登録内容確認',
+      formData: req.body
+    });
+
+  } catch (error) {
+    console.error('Register validation error:', error);
+    res.status(500).render('error', {
+      title: 'エラー',
+      message: '登録中にエラーが発生しました'
+    });
+  }
+});
+
+// ボランティア登録最終送信処理
+router.post('/submit', async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const {
+      type,
+      name,
+      orgName,
+      email,
+      phone,
+      address,
+      skills,
+      interests,
+      conservationActivities,
+      notes,
+      agreeToTerms
+    } = req.body;
+
     // ボランティア登録
     const volunteer = await prisma.volunteer.create({
       data: {
@@ -77,15 +119,15 @@ router.post('/', async (req, res) => {
     });
 
     res.render('register-success', {
-      title: '登録完了',
+      title: 'ボランティア登録完了',
       volunteer
     });
 
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Registration submit error:', error);
     res.status(500).render('error', {
       title: 'エラー',
-      message: '登録中にエラーが発生しました'
+      message: '登録送信中にエラーが発生しました'
     });
   }
 });

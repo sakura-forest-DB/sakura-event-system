@@ -54,23 +54,134 @@
                         <p class="lead">ボランティア登録が完了しました</p>
                         
                         <div class="alert alert-info text-start">
-                            <h5>登録情報</h5>
-                            <ul class="mb-0">
-                                <li><strong>氏名:</strong> <%= volunteer.name %></li>
-                                <% if (volunteer.orgName) { %>
-                                    <li><strong>団体名:</strong> <%= volunteer.orgName %></li>
-                                <% } %>
-                                <li><strong>メールアドレス:</strong> <%= volunteer.email %></li>
-                                <% if (volunteer.phone) { %>
-                                    <li><strong>電話番号:</strong> <%= volunteer.phone %></li>
-                                <% } %>
-                            </ul>
+                            <h5>📝 登録情報</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>登録種別:</strong>
+                                    <span class="badge bg-<%= volunteer.type === 'org' ? 'info' : 'primary' %> ms-2">
+                                        <%= volunteer.type === 'org' ? '団体' : '個人' %>
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong><%= volunteer.type === 'org' ? '代表者名' : '氏名' %>:</strong> <%= volunteer.name %>
+                                </div>
+                            </div>
+                            
+                            <% if (volunteer.orgName) { %>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>団体名:</strong> <%= volunteer.orgName %>
+                                </div>
+                            </div>
+                            <% } %>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>メールアドレス:</strong> <%= volunteer.email %>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>電話番号:</strong> <%= volunteer.phone || '未入力' %>
+                                </div>
+                            </div>
+                            
+                            <% if (volunteer.address) { %>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <strong>住所:</strong> <%= volunteer.address %>
+                                </div>
+                            </div>
+                            <% } %>
+                            
+                            <!-- スキル・興味 -->
+                            <% if (volunteer.skills) { %>
+                            <%
+                            let skillsData;
+                            try {
+                                skillsData = JSON.parse(volunteer.skills);
+                            } catch (e) {
+                                skillsData = [];
+                            }
+                            %>
+                            <% if (skillsData.length > 0) { %>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <strong>スキル:</strong>
+                                    <% skillsData.forEach(skill => { %>
+                                        <span class="badge bg-secondary me-1"><%= skill %></span>
+                                    <% }); %>
+                                </div>
+                            </div>
+                            <% } %>
+                            <% } %>
+                            
+                            <% if (volunteer.interests) { %>
+                            <%
+                            let interestsData = [];
+                            let conservationData = [];
+                            try {
+                                const interestsParts = volunteer.interests.split('|');
+                                if (interestsParts[0]) {
+                                    interestsData = JSON.parse(interestsParts[0]);
+                                }
+                                if (interestsParts[1]) {
+                                    conservationData = JSON.parse(interestsParts[1]);
+                                }
+                            } catch (e) {
+                                // ignore
+                            }
+                            %>
+                            <% if (interestsData.length > 0) { %>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <strong>興味のある活動:</strong>
+                                    <% interestsData.forEach(interest => { %>
+                                        <span class="badge bg-info me-1"><%= interest %></span>
+                                    <% }); %>
+                                </div>
+                            </div>
+                            <% } %>
+                            <% if (conservationData.length > 0) { %>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <strong>保全活動:</strong>
+                                    <% conservationData.forEach(activity => { %>
+                                        <span class="badge bg-success me-1"><%= activity %></span>
+                                    <% }); %>
+                                </div>
+                            </div>
+                            <% } %>
+                            <% } %>
+                            
+                            <% if (volunteer.notes) { %>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <strong>備考:</strong> <%= volunteer.notes %>
+                                </div>
+                            </div>
+                            <% } %>
                         </div>
                         
+                        <!-- 個人情報同意確認表示 -->
+                        <div class="alert alert-light text-start">
+                            <h6>🔒 個人情報の取り扱い同意状況</h6>
+                            <div class="form-check">
+                                <span class="form-check-input" style="background-color: #d4edda; border-color: #28a745;">✓</span>
+                                <label class="form-check-label ms-2">
+                                    ご入力いただいた個人情報を、菊名桜山公園でのボランティア活動の運営や連絡、今後の活動のお知らせに必要な範囲で利用することに同意します。（必須）
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <% if (!isPreview) { %>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <a href="/apply" class="btn btn-primary btn-lg me-md-2">イベントに申込む</a>
                             <a href="/" class="btn btn-outline-primary btn-lg">ホームに戻る</a>
                         </div>
+                        <% } else { %>
+                        <div class="alert alert-warning text-center">
+                            <strong>プレビューモード</strong> - このページは管理者用のプレビューです
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>

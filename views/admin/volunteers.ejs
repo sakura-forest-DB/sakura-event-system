@@ -14,6 +14,11 @@
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
+    <!-- 管理者モード表示 -->
+    <div class="alert alert-warning mb-0 text-center border-0 rounded-0" style="background: linear-gradient(45deg, #ffc107, #ffca2c);">
+        <strong>🔧 管理者モード</strong> - 管理者として操作中です
+    </div>
+    
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
@@ -64,6 +69,18 @@
             <li class="nav-item">
                 <a class="nav-link" href="/admin/events">イベント管理</a>
             </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="previewDropdown" role="button" data-bs-toggle="dropdown">プレビュー</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/admin/preview/volunteer-complete" target="_blank">🌱 ボランティア登録完了画面</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/admin/preview/application-confirm?type=stall" target="_blank">🏪 出店申込確認画面</a></li>
+                    <li><a class="dropdown-item" href="/admin/preview/application-complete?type=stall" target="_blank">🏪 出店申込完了画面</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/admin/preview/application-confirm?type=performer" target="_blank">🎭 出演申込確認画面</a></li>
+                    <li><a class="dropdown-item" href="/admin/preview/application-complete?type=performer" target="_blank">🎭 出演申込完了画面</a></li>
+                </ul>
+            </li>
         </ul>
 
         <!-- 検索・絞り込みフォーム -->
@@ -96,15 +113,6 @@
                             <option value="運営" <%= filters.role === '運営' ? 'selected' : '' %>>運営</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label">参加頻度</label>
-                        <select class="form-control" name="freq">
-                            <option value="">全て</option>
-                            <option value="monthly" <%= filters.freq === 'monthly' ? 'selected' : '' %>>月1回程度</option>
-                            <option value="weekly" <%= filters.freq === 'weekly' ? 'selected' : '' %>>週1回程度</option>
-                            <option value="ad-hoc" <%= filters.freq === 'ad-hoc' ? 'selected' : '' %>>随時・不定期</option>
-                        </select>
-                    </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">検索</button>
                         <a href="/admin/volunteers" class="btn btn-outline-secondary">クリア</a>
@@ -134,7 +142,12 @@
                                 <% volunteers.forEach(volunteer => { %>
                                     <tr>
                                         <td>
-                                            <strong><%= volunteer.name %></strong>
+                                            <a href="/admin/volunteers/<%= volunteer.id %>" class="text-decoration-none">
+                                                <strong><%= volunteer.name %></strong>
+                                                <% if (volunteer.changeLogs && volunteer.changeLogs.length > 0) { %>
+                                                    <span class="badge bg-warning ms-1" title="最終更新: <%= volunteer.changeLogs[0].createdAt.toLocaleDateString('ja-JP') %>">編集済</span>
+                                                <% } %>
+                                            </a>
                                             <% if (volunteer.orgName) { %>
                                                 <br><small class="text-muted">(<%= volunteer.orgName %>)</small>
                                             <% } %>
