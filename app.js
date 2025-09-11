@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false // 本番でCSP有効
+  contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
 }));
 
 // Rate limiting

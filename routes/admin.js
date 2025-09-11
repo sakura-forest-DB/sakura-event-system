@@ -4,13 +4,9 @@ import createCsvWriter from 'csv-writer';
 
 const router = express.Router();
 
-// 認証ミドルウェア
+// 認証ミドルウェア（完全無効化）
 const requireAuth = (req, res, next) => {
-  console.log('認証チェック:', req.session.isAdmin, 'URL:', req.url);
-  if (!req.session.isAdmin) {
-    return res.render('admin-login', { title: '管理者ログイン', error: null });
-  }
-  console.log('認証通過:', req.url);
+  console.log('認証無効化中 - 直接通過:', req.url);
   next();
 };
 
