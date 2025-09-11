@@ -31,10 +31,10 @@ app.use(helmet({
   contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
 }));
 
-// Rate limiting
+// Rate limiting (研修期間中は大幅緩和)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 本番では厳しく制限
+  max: 500, // 研修中は500回まで大幅緩和
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -42,10 +42,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Form submission rate limiting (より厳しい制限)
+// Form submission rate limiting (研修期間中は緩和)
 const formLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10分
-  max: 5, // 5回まで
+  windowMs: 5 * 60 * 1000, // 5分
+  max: process.env.NODE_ENV === 'production' ? 20 : 100, // 研修中は20回まで
   message: 'Too many form submissions, please try again later.',
   trustProxy: true // Render環境用の設定
 });
