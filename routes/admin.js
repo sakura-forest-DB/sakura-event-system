@@ -584,6 +584,7 @@ router.get('/stalls/export', requireAuth, async (req, res) => {
       テント奥行: stall.tentDepth || '',
       テント高さ: stall.tentHeight || '',
       車両台数: stall.vehicleCount || '',
+      車両種別: stall.vehicleType || '',
       車両ナンバー: stall.vehicleNumbers || '',
       レンタルテーブル: stall.rentalTables || '',
       レンタル椅子: stall.rentalChairs || '',
