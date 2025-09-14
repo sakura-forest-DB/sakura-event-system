@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e .env.development -- nodemon app.js",
-    "start": "node app.js",
+    "start": "npx prisma db push --force-reset && node app.js",
     "start:local-prod": "dotenv -e .env.production -- node app.js",
     "training": "dotenv -e .env.training -- nodemon app.js",
     "seed": "dotenv -e .env.development -- node scripts/seed.js",
