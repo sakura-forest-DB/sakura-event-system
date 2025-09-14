@@ -192,7 +192,8 @@ router.post('/', async (req, res) => {
     res.render('apply_stall_confirm', {
       title: '出店申込内容確認',
       formData: req.body,
-      event
+      event,
+      isPreview: false
     });
 
   } catch (error) {
