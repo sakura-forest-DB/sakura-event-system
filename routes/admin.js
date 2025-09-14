@@ -612,6 +612,7 @@ router.get('/stalls/export', requireAuth, async (req, res) => {
         {id: 'テント奥行', title: 'テント奥行（m）'},
         {id: 'テント高さ', title: 'テント高さ（m）'},
         {id: '車両台数', title: '車両台数'},
+        {id: '車両種別', title: '車両種別'},
         {id: '車両ナンバー', title: '車両ナンバー'},
         {id: 'レンタルテーブル', title: 'レンタルテーブル数'},
         {id: 'レンタル椅子', title: 'レンタル椅子数'},
