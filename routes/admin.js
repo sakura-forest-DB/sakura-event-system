@@ -522,7 +522,6 @@ router.get('/stalls', requireAuth, async (req, res) => {
       where: whereClause,
       include: {
         event: true,
-        adminNotes: true,
         changeLogs: true
       },
       skip: offset,
@@ -646,9 +645,6 @@ router.get('/stalls/:id', requireAuth, async (req, res) => {
       where: { id: req.params.id },
       include: { 
         event: true,
-        adminNotes: {
-          orderBy: { createdAt: 'desc' }
-        },
         changeLogs: {
           orderBy: { createdAt: 'desc' }
         }
@@ -703,7 +699,6 @@ router.get('/performers', requireAuth, async (req, res) => {
       where: whereClause,
       include: {
         event: true,
-        adminNotes: true,
         changeLogs: true
       },
       skip: offset,
@@ -818,9 +813,6 @@ router.get('/performers/:id', requireAuth, async (req, res) => {
       where: { id: req.params.id },
       include: { 
         event: true,
-        adminNotes: {
-          orderBy: { createdAt: 'desc' }
-        },
         changeLogs: {
           orderBy: { createdAt: 'desc' }
         }
@@ -856,9 +848,6 @@ router.get('/stalls/:id/edit', requireAuth, async (req, res) => {
       where: { id: req.params.id },
       include: {
         event: true,
-        adminNotes: {
-          orderBy: { createdAt: 'desc' }
-        }
       }
     });
 
@@ -1049,31 +1038,6 @@ router.post('/stalls/:id/update', requireAuth, async (req, res) => {
   }
 });
 
-// 追記メモ投稿（出店申込）
-router.post('/stalls/:id/notes', requireAuth, async (req, res) => {
-  try {
-    const prisma = req.prisma;
-    const { content, adminName } = req.body;
-    
-    if (!content || !adminName) {
-      return res.redirect(`/admin/stalls/${req.params.id}?error=メモ内容と記録者名を入力してください`);
-    }
-
-    await prisma.applicationNote.create({
-      data: {
-        content: content.trim(),
-        adminName: adminName.trim(),
-        stallApplicationId: req.params.id
-      }
-    });
-
-    res.redirect(`/admin/stalls/${req.params.id}`);
-
-  } catch (error) {
-    console.error('Stall note creation error:', error);
-    res.redirect(`/admin/stalls/${req.params.id}?error=メモの保存に失敗しました`);
-  }
-});
 
 // 出演申込編集画面
 router.get('/performers/:id/edit', requireAuth, async (req, res) => {
@@ -1083,9 +1047,6 @@ router.get('/performers/:id/edit', requireAuth, async (req, res) => {
       where: { id: req.params.id },
       include: {
         event: true,
-        adminNotes: {
-          orderBy: { createdAt: 'desc' }
-        }
       }
     });
 
@@ -1261,31 +1222,6 @@ router.post('/performers/:id/update', requireAuth, async (req, res) => {
   }
 });
 
-// 追記メモ投稿（出演申込）
-router.post('/performers/:id/notes', requireAuth, async (req, res) => {
-  try {
-    const prisma = req.prisma;
-    const { content, adminName } = req.body;
-    
-    if (!content || !adminName) {
-      return res.redirect(`/admin/performers/${req.params.id}?error=メモ内容と記録者名を入力してください`);
-    }
-
-    await prisma.applicationNote.create({
-      data: {
-        content: content.trim(),
-        adminName: adminName.trim(),
-        performerApplicationId: req.params.id
-      }
-    });
-
-    res.redirect(`/admin/performers/${req.params.id}`);
-
-  } catch (error) {
-    console.error('Performer note creation error:', error);
-    res.redirect(`/admin/performers/${req.params.id}?error=メモの保存に失敗しました`);
-  }
-});
 
 // ボランティア登録完了画面プレビュー
 router.get('/preview/volunteer-complete', requireAuth, async (req, res) => {

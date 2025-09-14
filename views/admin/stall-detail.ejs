@@ -400,119 +400,86 @@
                     </div>
                 </div>
 
+                <!-- 変更履歴セクション（統合表示） -->
+                <% if (stall.changeLogs && stall.changeLogs.length > 0) { %>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">📜 申込内容変更履歴</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>変更日時</th>
+                                        <th>編集者</th>
+                                        <th>項目</th>
+                                        <th>変更前</th>
+                                        <th>変更後</th>
+                                        <th>変更理由</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% stall.changeLogs.forEach(log => { %>
+                                    <tr>
+                                        <td><%= new Date(log.createdAt).toLocaleString('ja-JP') %></td>
+                                        <td><%= log.editor %></td>
+                                        <td><%= log.field %></td>
+                                        <td><%= log.oldValue || '未入力' %></td>
+                                        <td><%= log.newValue || '未入力' %></td>
+                                        <td><%= log.reason %></td>
+                                    </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <% } %>
 
-            <!-- 変更履歴タブ -->
-            <div class="tab-pane fade" id="changes" role="tabpanel" aria-labelledby="changes-tab">
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <!-- 管理メモセクション -->
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <h5 class="mb-0">📝 管理メモ</h5>
-                            </div>
-                            <div class="card-body">
-                                <!-- メモ追加フォーム -->
-                                <form method="POST" action="/admin/stalls/<%= stall.id %>/notes" class="mb-3">
-                                    <div class="mb-2">
-                                        <label for="adminName" class="form-label">記録者名</label>
-                                        <input type="text" class="form-control form-control-sm" id="adminName" name="adminName" required>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="content" class="form-label">メモ内容</label>
-                                        <textarea class="form-control form-control-sm" id="content" name="content" rows="3" required></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-sm">追記</button>
-                                </form>
-
-                                <!-- 既存メモ一覧 -->
-                                <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
-                                    <hr>
-                                    <h6>やりとり履歴</h6>
-                                    <% stall.adminNotes.forEach(note => { %>
-                                        <div class="border-start border-3 border-info ps-2 mb-2">
-                                            <small class="text-muted">
-                                                <%= new Date(note.createdAt).toLocaleString('ja-JP') %> 
-                                                by <strong><%= note.adminName %></strong>
-                                            </small>
-                                            <div class="small" style="white-space: pre-wrap;"><%= note.content %></div>
-                                        </div>
-                                    <% }); %>
-                                <% } else { %>
-                                    <p class="text-muted small">まだメモはありません</p>
-                                <% } %>
-                            </div>
-                        </div>
-
-                        <!-- 変更履歴セクション -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">📜 申込内容変更履歴</h5>
-                            </div>
-                            <div class="card-body">
-                                <% if (stall.changeLogs && stall.changeLogs.length > 0) { %>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>変更日時</th>
-                                                    <th>編集者</th>
-                                                    <th>項目</th>
-                                                    <th>変更前</th>
-                                                    <th>変更後</th>
-                                                    <th>変更理由</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% stall.changeLogs.forEach(log => { %>
-                                                    <tr>
-                                                        <td><%= new Date(log.createdAt).toLocaleString('ja-JP') %></td>
-                                                        <td><%= log.editor %></td>
-                                                        <td><%= log.field %></td>
-                                                        <td><%= log.oldValue || '未入力' %></td>
-                                                        <td><%= log.newValue || '未入力' %></td>
-                                                        <td><%= log.reason %></td>
-                                                    </tr>
-                                                <% }); %>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                <% } else { %>
-                                    <p class="text-muted">まだ変更履歴はありません</p>
-                                <% } %>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 印刷用メモセクション（A4 2枚目） -->
+        <!-- 印刷用変更履歴セクション（A4 2枚目） -->
+        <% if (stall.changeLogs && stall.changeLogs.length > 0) { %>
         <div class="d-none d-print-block page-break-before">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">📝 管理メモ・やりとり履歴</h4>
+                    <h4 class="mb-0">📜 申込内容変更履歴</h4>
                 </div>
                 <div class="card-body">
-                    <% if (stall.adminNotes && stall.adminNotes.length > 0) { %>
-                        <% stall.adminNotes.forEach(note => { %>
-                            <div class="mb-3 no-page-break">
-                                <div class="form-label">
-                                    <%= new Date(note.createdAt).toLocaleString('ja-JP') %> / <%= note.adminName %>
-                                </div>
-                                <div class="form-control-plaintext" style="white-space: pre-wrap; min-height: 20px; border: 1px solid #dee2e6; padding: 8px; border-radius: 4px;">
-                                    <%= note.content %>
-                                </div>
-                            </div>
-                        <% }); %>
-                    <% } else { %>
-                        <p class="text-muted">やりとり記録はありません</p>
-                    <% } %>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>変更日時</th>
+                                    <th>編集者</th>
+                                    <th>項目</th>
+                                    <th>変更前</th>
+                                    <th>変更後</th>
+                                    <th>変更理由</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% stall.changeLogs.forEach(log => { %>
+                                <tr>
+                                    <td><%= new Date(log.createdAt).toLocaleString('ja-JP') %></td>
+                                    <td><%= log.editor %></td>
+                                    <td><%= log.field %></td>
+                                    <td><%= log.oldValue || '未入力' %></td>
+                                    <td><%= log.newValue || '未入力' %></td>
+                                    <td><%= log.reason %></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+        <% } %>
     </main>
 
     <footer class="py-3 mt-4">
