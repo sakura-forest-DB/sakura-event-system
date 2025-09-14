@@ -125,7 +125,9 @@ router.post('/', async (req, res) => {
       vehicleNumbers,
       rentalTables,
       rentalChairs,
-      questions
+      questions,
+      privacyConsent,
+      marketingConsent
     } = req.body;
 
     const errors = [];

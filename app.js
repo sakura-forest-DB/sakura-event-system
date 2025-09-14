@@ -26,6 +26,9 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy設定（Render環境用）
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
