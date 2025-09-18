@@ -7,6 +7,10 @@ const router = express.Router();
 // 認証ミドルウェア（完全無効化 - 直接管理画面にアクセス可能）
 const requireAuth = (req, res, next) => {
   console.log('認証完全バイパス中:', req.url);
+  // セッション設定を確実に
+  if (!req.session) {
+    console.error('Session not found');
+  }
   req.session.isAdmin = true; // 強制的に管理者権限を付与
   next();
 };
