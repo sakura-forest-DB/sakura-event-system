@@ -7,9 +7,9 @@ echo "🚀 Production Build Started..."
 echo "📦 Generating Prisma Client..."
 npx prisma generate
 
-# マイグレーション適用（安全版 - データを保持）
-echo "🗄️  Applying database migrations (safe mode)..."
-npx prisma migrate deploy
+# データベーススキーマを同期（既存データを保持しつつスキーマ更新）
+echo "🗄️  Syncing database schema (safe mode)..."
+npx prisma db push
 
 # イベントデータ作成（既存データがない場合のみ）
 echo "🎯 Creating event data if needed..."
