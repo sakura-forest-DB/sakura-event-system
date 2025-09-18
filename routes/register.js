@@ -102,6 +102,23 @@ router.post('/submit', async (req, res) => {
       agreeToTerms
     } = req.body;
 
+    // 再度重複チェック（送信時の最終確認）
+    const existingVolunteer = await prisma.volunteer.findFirst({
+      where: {
+        AND: [
+          { email: email },
+          { name: name }
+        ]
+      }
+    });
+
+    if (existingVolunteer) {
+      return res.render('error', {
+        title: 'エラー',
+        message: '同じメールアドレスと氏名の登録が既に存在します。'
+      });
+    }
+
     // ボランティア登録
     const volunteer = await prisma.volunteer.create({
       data: {
@@ -120,7 +137,8 @@ router.post('/submit', async (req, res) => {
 
     res.render('register-success', {
       title: 'ボランティア登録完了',
-      volunteer
+      volunteer,
+      isPreview: false
     });
 
   } catch (error) {
