@@ -4,18 +4,24 @@ import createCsvWriter from 'csv-writer';
 
 const router = express.Router();
 
-// 認証ミドルウェア（完全無効化 - 直接管理画面にアクセス可能）
+// 認証ミドルウェア
 const requireAuth = (req, res, next) => {
-  console.log('認証完全バイパス中:', req.url);
-  req.session.isAdmin = true; // 強制的に管理者権限を付与
-  next();
+  if (req.session.isAdmin) {
+    next();
+  } else {
+    res.redirect('/admin/login');
+  }
 };
 
-// 管理者ログイン画面（テスト中は自動リダイレクト）
+// 管理者ログイン画面
 router.get('/login', (req, res) => {
-  // テスト中は直接管理画面にリダイレクト
-  req.session.isAdmin = true;
-  return res.redirect('/admin/volunteers');
+  if (req.session.isAdmin) {
+    return res.redirect('/admin/volunteers');
+  }
+  res.render('admin/login', {
+    title: '管理者ログイン',
+    error: req.query.error
+  });
 });
 
 // 管理者ログイン処理
