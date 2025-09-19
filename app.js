@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
-import rateLimit from 'express-rate-limit';
 
 // --- optional helmet ---
 let helmet;
@@ -16,6 +15,16 @@ try {
   console.warn('helmet not available; starting without it');
 }
 // --- end optional helmet ---
+
+// --- optional rate-limit ---
+let rateLimit;
+try {
+  const mod = await import('express-rate-limit');
+  rateLimit = mod.default || mod;
+} catch (e) {
+  console.warn('express-rate-limit not available; continuing without rate limiting');
+}
+// --- end optional rate-limit ---
 
 // Import routes
 import homeRoutes from './routes/home.js';
@@ -54,23 +63,20 @@ if (helmet) {
 }
 
 // Rate limiting (研修期間中は大幅緩和)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15分
-  max: 500, // 研修中は500回まで大幅緩和
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  trustProxy: true // Render環境用の設定
-});
-app.use(limiter);
+if (rateLimit) {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15分
+    max: 500, // 研修中は500回まで大幅緩和
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+    trustProxy: true // Render環境用の設定
+  });
+  app.use(limiter);
 
-// Form submission rate limiting (研修期間中は緩和)
-const formLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5分
-  max: process.env.NODE_ENV === 'production' ? 20 : 100, // 研修中は20回まで
-  message: 'Too many form submissions, please try again later.',
-  trustProxy: true // Render環境用の設定
-});
+} else {
+  console.warn('Rate limiting disabled - express-rate-limit not available');
+}
 
 // Make prisma available in req
 app.use((req, res, next) => {
@@ -101,10 +107,23 @@ app.use(session({
 
 // Routes
 app.use('/', homeRoutes);
-app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
-app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
-app.use('/apply/stall', formLimiter, applyStallRoutes); // フォーム送信制限
-app.use('/apply/performer', formLimiter, applyPerformerRoutes); // フォーム送信制限
+if (rateLimit) {
+  const formLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // 5分
+    max: process.env.NODE_ENV === 'production' ? 20 : 100, // 研修中は20回まで
+    message: 'Too many form submissions, please try again later.',
+    trustProxy: true // Render環境用の設定
+  });
+  app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
+  app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
+  app.use('/apply/stall', formLimiter, applyStallRoutes); // フォーム送信制限
+  app.use('/apply/performer', formLimiter, applyPerformerRoutes); // フォーム送信制限
+} else {
+  app.use('/register', registerRoutes);
+  app.use('/apply', applyRoutes);
+  app.use('/apply/stall', applyStallRoutes);
+  app.use('/apply/performer', applyPerformerRoutes);
+}
 app.use('/status', statusRoutes);
 app.use('/admin', adminRoutes);
 
