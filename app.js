@@ -47,6 +47,31 @@ const PORT = process.env.PORT || 3000;
 // Trust proxy設定（Render環境用）
 app.set('trust proxy', 1);
 
+// ==== Admin gate (no deps) ====
+const ADMIN_ENABLED = process.env.ADMIN_UI_ENABLED !== 'false';
+const ADMIN_USER = process.env.ADMIN_USER || '';
+const ADMIN_PASS = process.env.ADMIN_PASS || '';
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/admin')) return next();
+  
+  // デフォルト：存在を隠す
+  if (!ADMIN_ENABLED) return res.status(404).send('Not Found');
+  
+  // Basic 認証（HTTPS 前提 / Render は https 提供）
+  const auth = req.headers.authorization || '';
+  const token = auth.split(' ')[1] || '';
+  const [u, p] = Buffer.from(token || '', 'base64').toString().split(':');
+  
+  if (u === ADMIN_USER && p === ADMIN_PASS && ADMIN_USER && ADMIN_PASS) {
+    return next();
+  }
+  
+  res.set('WWW-Authenticate', 'Basic realm="admin"');
+  return res.status(401).send('Unauthorized');
+});
+// ==== end Admin gate ====
+
 // Security middleware
 if (helmet) {
   app.use(helmet({
@@ -87,6 +112,9 @@ app.use((req, res, next) => {
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// テンプレート変数（管理リンクの出し分け用）
+app.locals.ADMIN_ENABLED = ADMIN_ENABLED;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
