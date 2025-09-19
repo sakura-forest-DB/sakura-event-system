@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e .env.development -- nodemon app.js",
-    "start": "node scripts/create-events.js && node app.js",
+    "start": "node app.js",
     "build:production": "bash scripts/production-build.sh",
     "start:local-prod": "dotenv -e .env.production -- node app.js",
     "training": "dotenv -e .env.training -- nodemon app.js",

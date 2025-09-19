@@ -12,7 +12,7 @@ echo "🗄️  Syncing database schema (safe mode)..."
 npx prisma db push
 
 # イベントデータ作成（既存データがない場合のみ）
-echo "🎯 Creating event data if needed..."
-node scripts/create-events.js
+# echo "🎯 Creating event data if needed..."
+# node scripts/create-events.js  # 重複エラー回避のため一時的に無効化
 
 echo "✅ Production Build Completed Successfully!"
