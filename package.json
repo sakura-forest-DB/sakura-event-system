@@ -23,6 +23,9 @@
     "setup:render": "node scripts/render-setup.js",
     "cc": "claude"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "keywords": [
     "volunteer",
     "management",
