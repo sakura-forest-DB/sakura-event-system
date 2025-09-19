@@ -5,8 +5,17 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
-import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+
+// --- optional helmet ---
+let helmet;
+try {
+  const mod = await import('helmet');  // type:module なのでOK
+  helmet = mod.default || mod;
+} catch (e) {
+  console.warn('helmet not available; starting without it');
+}
+// --- end optional helmet ---
 
 // Import routes
 import homeRoutes from './routes/home.js';
@@ -30,9 +39,19 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
-}));
+if (helmet) {
+  app.use(helmet({
+    contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
+  }));
+} else {
+  // 簡易的なセキュリティヘッダを付与（暫定）
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-Frame-Options', 'DENY');
+    next();
+  });
+}
 
 // Rate limiting (研修期間中は大幅緩和)
 const limiter = rateLimit({
