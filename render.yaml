@@ -3,7 +3,7 @@ services:
     name: kikuna-event-system
     env: node
     plan: free
-    buildCommand: npm install && npm run db:generate && npx prisma db push && npm run setup:render
+    buildCommand: npm install && npm run db:generate && npx prisma migrate deploy && npm run setup:render
     startCommand: npm start
     healthCheckPath: /
     envVars:
