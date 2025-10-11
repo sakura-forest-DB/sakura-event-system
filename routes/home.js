@@ -4,28 +4,32 @@ const router = express.Router();
 // ホームページ
 router.get('/', async (req, res) => {
   try {
-    const prisma = req.prisma;
-    
-
-    // 募集中のイベント
+    const prisma = req.prisma;          // 既存の仕組みをそのまま利用
     const currentDate = new Date();
+
+    // 募集中のみ（公開 && OPEN && 未来日）
     const events = await prisma.event.findMany({
       where: {
-        date: {
-          gte: currentDate
-        }
+        AND: [
+          { date: { gte: currentDate } },
+          { isPublic: true },
+          { status: 'OPEN' }
+        ]
       },
       orderBy: { date: 'asc' },
       take: 3
     });
 
-    // 申込可能かどうかを各イベントに追加
     const upcomingEvents = events.map(event => ({
       ...event,
-      canApply: !event.applicationStartDate || event.applicationStartDate <= currentDate,
-      applicationStartMessage: event.applicationStartDate && event.applicationStartDate > currentDate 
-        ? `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
-        : null
+      canApply:
+        !event.applicationStartDate ||
+        event.applicationStartDate <= currentDate,
+      applicationStartMessage:
+        event.applicationStartDate &&
+        event.applicationStartDate > currentDate
+          ? `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
+          : null
     }));
 
     res.render('home', {
@@ -33,10 +37,11 @@ router.get('/', async (req, res) => {
       upcomingEvents
     });
   } catch (error) {
-    console.error('Home page error:', error);
+    console.error('[home] load error:', error);
     res.status(500).render('error', {
       title: 'エラー',
-      message: 'データの取得中にエラーが発生しました'
+      message: 'イベント一覧の取得に失敗しました。',
+      error: { status: 500 }
     });
   }
 });
