@@ -37,17 +37,21 @@ model Event {
   title       String
   slug        String   @unique
   date        DateTime
-  applicationStartDate DateTime?  // 申込開始日
+  applicationStartDate DateTime?
   location    String
   description String
+  isPublic    Boolean  @default(true)
+  status      String   @default("OPEN")
   createdAt   DateTime @default(now())
-  
-  signups              Signup[]
-  stallApplications    StallApplication[]
+  updatedAt   DateTime @updatedAt
+
+  signups               Signup[]
+  stallApplications     StallApplication[]
   performerApplications PerformerApplication[]
-  
+
   @@map("events")
 }
+
 
 model Signup {
   id           String   @id @default(cuid())
