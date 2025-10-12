@@ -102,16 +102,16 @@ app.use('/admin', (req, res, next) => {
 import homeRoutes from './routes/home.js';
 import registerRoutes from './routes/register.js';
 import adminRoutes from './routes/admin.js';
-import applyBaseRoutes from './routes/apply.js';           // /apply (slug-less = 404)
-import applyStallRoutes from './routes/apply-stall.js';    // /apply/:slug/stall
-import applyPerformerRoutes from './routes/apply-performer.js'; // /apply/:slug/performer
+import applyBaseRoutes from './routes/apply.js';           // /apply 一覧（ランディングページ）
+import applyStallRoutes from './routes/apply-stall.js';    // /apply/:slug/stall 出店申込フォーム
+import applyPerformerRoutes from './routes/apply-performer.js'; // /apply/:slug/performer 出演申込フォーム
 
 app.use('/', homeRoutes);
 app.use('/register', registerRoutes);
 app.use('/admin', adminRoutes);
-app.use('/apply', applyBaseRoutes);          // ← ランディングを返す apply.js
-app.use('/apply', applyStallRoutes);         // /apply/:slug/stall
-app.use('/apply', applyPerformerRoutes);     // /apply/:slug/performer
+app.use('/apply', applyBaseRoutes);          // ランディングページ表示
+app.use('/apply', applyStallRoutes);         // 各イベントごとの出店申込
+app.use('/apply', applyPerformerRoutes);     // 各イベントごとの出演申込
 
 // Health check (Render)
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
