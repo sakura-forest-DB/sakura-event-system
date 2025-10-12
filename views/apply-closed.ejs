@@ -1,0 +1,26 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h4 mb-3">申込受付は終了しています</h1>
+
+          <% if (typeof event !== 'undefined' && event) { %>
+            <p class="mb-2">
+              対象イベント：<strong><%= event.title %></strong>
+            </p>
+          <% } %>
+
+          <p class="text-muted mb-4">
+            このイベントは現在、申込できない状態（非公開または受付終了）です。
+          </p>
+
+          <div class="d-flex gap-2">
+            <a href="/" class="btn btn-primary">🏠 ホームへ</a>
+            <a href="/register" class="btn btn-outline-secondary">🙋 ボランティア登録</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
