@@ -104,22 +104,20 @@ if (helmet) {
 }
 
   // Rate limiting (研修期間中は大幅緩和)
-  if (rateLimit) {
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000, // 15分
-      max: 500, // 研修中は500回まで大幅緩和
-      message: 'Too many requests from this IP, please try 
-  again later.',
-      standardHeaders: true,
-      legacyHeaders: false,
-      trustProxy: true // Render環境用の設定
-    });
-    app.use(limiter);
+if (rateLimit) {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15分
+    max: 500, // 研修中は500回まで大幅緩和
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+    trustProxy: true // Render環境用の設定
+  });
+  app.use(limiter);
 
-  } else {
-    console.warn('express-rate-limit not available; continuing without rate limiting');
-  }
-
+} else {
+  console.warn('express-rate-limit not available; continuing without rate limiting');
+}
   // Make prisma available in req
   app.use((req, res, next) => {
     req.prisma = prisma;
