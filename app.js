@@ -13,8 +13,7 @@
   なのでOK
     helmet = mod.default || mod;
   } catch (e) {
-    console.warn('helmet not available; starting without 
-  it');
+console.warn('helmet not available; starting without it');
   }
   // --- end optional helmet ---
 
@@ -24,8 +23,7 @@
     const mod = await import('express-rate-limit');
     rateLimit = mod.default || mod;
   } catch (e) {
-    console.warn('express-rate-limit not available; 
-  continuing without rate limiting');
+    console.warn('express-rate-limit not available; continuing without rate limiting');
   }
   // --- end optional rate-limit ---
 
@@ -110,8 +108,7 @@
     app.use(limiter);
 
   } else {
-    console.warn('Rate limiting disabled - 
-  express-rate-limit not available');
+    console.warn('express-rate-limit not available; continuing without rate limiting');
   }
 
   // Make prisma available in req
