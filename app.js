@@ -109,9 +109,9 @@ import applyPerformerRoutes from './routes/apply-performer.js'; // /apply/:slug/
 app.use('/', homeRoutes);
 app.use('/register', registerRoutes);
 app.use('/admin', adminRoutes);
-app.use('/apply', applyBaseRoutes);          // ランディングページ表示
-app.use('/apply', applyStallRoutes);         // 各イベントごとの出店申込
-app.use('/apply', applyPerformerRoutes);     // 各イベントごとの出演申込
+app.use('/apply', applyBaseRoutes);       // /apply → ランディング
+app.use('/apply', applyStallRoutes);      // /apply/:slug/stall
+app.use('/apply', applyPerformerRoutes);  // /apply/:slug/performer
 
 // Health check (Render)
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
