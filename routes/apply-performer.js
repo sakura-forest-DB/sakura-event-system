@@ -104,3 +104,5 @@ router.post('/:slug/performer/submit', async (req, res) => {
     });
   }
 });
+
+export default router;
