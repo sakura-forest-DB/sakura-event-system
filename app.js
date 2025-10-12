@@ -102,7 +102,7 @@ app.use('/admin', (req, res, next) => {
 import homeRoutes from './routes/home.js';
 import registerRoutes from './routes/register.js';
 import adminRoutes from './routes/admin.js';
-import applyBaseRoutes from './routes/apply.js';           // /apply 一覧（ランディングページ）
+import applyBaseRoutes from './routes/apply-new.js';      // /apply 一覧（ランディングページ）
 import applyStallRoutes from './routes/apply-stall.js';    // /apply/:slug/stall 出店申込フォーム
 import applyPerformerRoutes from './routes/apply-performer.js'; // /apply/:slug/performer 出演申込フォーム
 
