@@ -1,37 +1,67 @@
-// routes/apply.js
 import express from 'express';
-import prisma from '../lib/prisma.js';
+  import prisma from '../lib/prisma.js';
 
-const router = express.Router();
+  const router = express.Router();
 
-// /apply（slugなし）は、申込対象イベントの一覧ランディングを表示
-router.get('/', async (req, res) => {
-  try {
-    const now = new Date();
-    const events = await prisma.event.findMany({
-      where: {
-        AND: [
-          { isPublic: true },
-          { status: 'OPEN' },
-          { date: { gte: now } },
-        ],
-      },
-      orderBy: { date: 'asc' },
-    });
+  // イベント申込分岐ページ表示（slugなしは404）
+  router.get('/', (req, res) =>
+    res.status(404).render('error', {
+      title: 'ページが見つかりません',
+      message: 'イベントを指定してください',
+      error: { status: 404 }
+    })
+  );
 
-    res.render('apply-landing', {
-      title: 'イベント申込',
-      events, // ← 配列で渡す
-      now,
-    });
-  } catch (e) {
-    console.error('[apply] landing error:', e);
-    res.status(500).render('error', {
-      title: 'エラー',
-      message: 'サーバー側でエラーが発生しました。',
-      error: { status: 500 },
-    });
-  }
-});
+  // 特定イベントの申込ページ表示
+  router.get('/:slug', async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const event = await prisma.event.findUnique({ where:
+  { slug } });
 
-export default router;
+      if (!event) {
+        return res.status(404).render('error', {
+          title: 'イベントが見つかりません',
+          message: '指定されたイベントが見つかりません',
+          error: { status: 404 }
+        });
+      }
+
+      // 申込受付状況をチェック
+      if (!event.isPublic || event.status !== 'OPEN') {
+        return res.render('apply-closed', {
+          title: '申込受付終了',
+          event
+        });
+      }
+
+      // 申込開始日をチェック
+      const currentDate = new Date();
+      const canApply = !event.applicationStartDate ||
+  event.applicationStartDate <= currentDate;
+
+      if (!canApply) {
+        return res.render('apply-closed', {
+          title: '申込開始前',
+          event,
+          applicationStartMessage: `申込開始: ${event.appli
+  cationStartDate.toLocaleDateString('ja-JP')}から`
+        });
+      }
+
+      res.render('apply', {
+        title: `${event.title} - イベント申込`,
+        event
+      });
+
+    } catch (error) {
+      console.error('[apply GET] error', error);
+      res.status(500).render('error', {
+        title: 'エラー',
+        message: 'ページ表示に失敗しました',
+        error: { status: 500 }
+      });
+    }
+  });
+
+  export default router;
