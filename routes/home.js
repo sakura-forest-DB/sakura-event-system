@@ -1,49 +1,58 @@
-import express from 'express';
-const router = express.Router();
+ import express from 'express';
+  import prisma from '../lib/prisma.js';
 
-// ホームページ
-router.get('/', async (req, res) => {
-  try {
-    const prisma = req.prisma;          // 既存の仕組みをそのまま利用
-    const currentDate = new Date();
+  const router = express.Router();
 
-    // 募集中のみ（公開 && OPEN && 未来日）
-    const events = await prisma.event.findMany({
-      where: {
-        AND: [
-          { date: { gte: currentDate } },
-          { isPublic: true },
-          { status: 'OPEN' }
-        ]
-      },
-      orderBy: { date: 'asc' },
-      take: 3
-    });
+  // ホームページ
+  router.get('/', async (req, res) => {
+    try {
+      const currentDate = new Date();
 
-    const upcomingEvents = events.map(event => ({
-      ...event,
-      canApply:
-        !event.applicationStartDate ||
-        event.applicationStartDate <= currentDate,
-      applicationStartMessage:
-        event.applicationStartDate &&
-        event.applicationStartDate > currentDate
-          ? `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
+      const events = await prisma.event.findMany({
+        where: {
+          AND: [
+            { isPublic: true },
+            { status: 'OPEN' },
+            { date: { gte: currentDate } }
+          ]
+        },
+        orderBy: { date: 'asc' }
+        // take は付けない（件数制限なし）
+      });
+
+      // 0件時の表示
+      if (!events || events.length === 0) {
+        return res.render('home', {
+          title: '菊名桜山公園 ボランティア募集',
+          upcomingEvents: [],
+          message: '現在募集中のイベントはありません。'
+        });
+      }
+
+      // 申込可能かどうかを各イベントに追加
+      const upcomingEvents = events.map(event => ({
+        ...event,
+        canApply: !event.applicationStartDate ||
+  event.applicationStartDate <= currentDate,
+        applicationStartMessage: event.applicationStartDate
+   && event.applicationStartDate > currentDate
+          ? `申込開始: ${event.applicationStartDate.toLocal
+  eDateString('ja-JP')}から`
           : null
-    }));
+      }));
 
-    res.render('home', {
-      title: '菊名桜山公園 ボランティア募集',
-      upcomingEvents
-    });
-  } catch (error) {
-    console.error('[home] load error:', error);
-    res.status(500).render('error', {
-      title: 'エラー',
-      message: 'イベント一覧の取得に失敗しました。',
-      error: { status: 500 }
-    });
-  }
-});
+      res.render('home', {
+        title: '菊名桜山公園 ボランティア募集',
+        upcomingEvents
+      });
+    } catch (error) {
+      console.error('[home] load error:', error);
+      res.status(500).render('error', {
+        title: 'エラー',
+        message: 'イベント一覧の取得に失敗しました。',
+        error: { status: 500 }
+      });
+    }
+  });
 
-export default router;
+  export default router;
