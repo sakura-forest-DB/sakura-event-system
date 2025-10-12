@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || '菊名桜山公園 ボランティア募集' %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .navbar-brand { font-weight: 700; color: #2d5a27 !important; }
+    .btn-volunteer { background:#2d5a27; border-color:#2d5a27; color:#fff; }
+    .btn-volunteer:hover { background:#1e3c1a; border-color:#1e3c1a; color:#fff; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg bg-light border-bottom">
+    <div class="container">
+      <a class="navbar-brand" href="/">菊名桜山公園</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="mainNav" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
+          <li class="nav-item"><a class="nav-link" href="/apply">イベント申込</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
