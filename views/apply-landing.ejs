@@ -1,30 +1,39 @@
 <%- include('partials/header', { title }) %>
 
 <div class="container py-4">
-  <h1 class="mb-3"><%= event.title %></h1>
-  <p class="text-muted mb-4">
-    開催日：<%= new Date(event.date).toLocaleDateString('ja-JP') %>
-  </p>
+  <h1 class="mb-3">イベント申込</h1>
 
-  <div class="d-grid gap-2 d-md-flex">
-    <a class="btn btn-stall btn-lg me-md-2"
-       href="/apply/<%= event.slug %>/stall">🏪 出店申込</a>
-    <a class="btn btn-performer btn-lg"
-       href="/apply/<%= event.slug %>/performer">🎭 出演申込</a>
-  </div>
+  <% if (!events || events.length === 0) { %>
+    <p class="text-muted">現在募集中のイベントはありません。</p>
+  <% } else { %>
+    <div class="row g-3">
+      <% events.forEach(ev => { %>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= ev.title %></h5>
+              <p class="card-text mb-1">日時: <%= new Date(ev.date).toLocaleDateString('ja-JP') %></p>
+              <p class="card-text">場所: <%= ev.location %></p>
 
-  <hr class="my-4">
-
-  <p>
-    申込開始日：
-    <% if (event.applicationStartDate) { %>
-      <strong><%= new Date(event.applicationStartDate).toLocaleDateString('ja-JP') %></strong>
-    <% } else { %>
-      <span class="text-muted">設定なし</span>
-    <% } %>
-  </p>
-
-  <p>ステータス：<code><%= event.status %></code></p>
+              <% const canApply = !ev.applicationStartDate || new Date(ev.applicationStartDate) <= now; %>
+              <% if (canApply) { %>
+                <div class="d-flex gap-2">
+                  <a class="btn btn-stall" href="/apply/<%= ev.slug %>/stall">🏪 出店申込</a>
+                  <a class="btn btn-performer" href="/apply/<%= ev.slug %>/performer">🎭 出演申込</a>
+                </div>
+              <% } else { %>
+                <p class="text-info mb-2">申込開始: <%= new Date(ev.applicationStartDate).toLocaleDateString('ja-JP') %> から</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-stall" disabled>🏪 出店申込（準備中）</button>
+                  <button class="btn btn-performer" disabled>🎭 出演申込（準備中）</button>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
 </div>
 
 <%- include('partials/footer') %>
