@@ -28,15 +28,14 @@ try {
 if (rateLimit) {
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 300,                  // 同時アクセス上限（必要に応じて調整）
+    max: 300,
     standardHeaders: true,
-    legacyHeaders: false,
-    message: 'Too many requests from this IP, please try again later.', // ← 1行で書く
+    legacyHeaders: false
+    // message を一時的に外す（行折返し対策）
   });
   app.use(limiter);
 }
 // --- end optional rate-limit ---
-
   // Import routes
   import homeRoutes from './routes/home.js';
   import registerRoutes from './routes/register.js';
