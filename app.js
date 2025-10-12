@@ -144,7 +144,7 @@ if (rateLimit) {
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production', // 
-  HTTPS必須（本番環境）
+ // HTTPS必須（本番環境）
       httpOnly: true, // XSS対策
       maxAge: 24 * 60 * 60 * 1000 // 24時間
     }
