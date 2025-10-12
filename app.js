@@ -76,21 +76,22 @@ try {
   });
   // ==== end Admin gate ====
 
-  // Security middleware
-  if (helmet) {
-    app.use(helmet({
-      contentSecurityPolicy: false // 
-  CSPを無効化（フォーム動作のため）
-    }));
-  } else {
-    // 簡易的なセキュリティヘッダを付与（暫定）
-    app.use((req, res, next) => {
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.setHeader('Referrer-Policy', 'no-referrer');
-      res.setHeader('X-Frame-Options', 'DENY');
-      next();
-    });
-  }
+ // Security middleware
+if (helmet) {
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // CSPを無効化（フォーム動作のため）
+    })
+  );
+} else {
+  // 簡易的なセキュリティヘッダを付与（暫定）
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-Frame-Options', 'DENY');
+    next();
+  });
+}
 
   // Rate limiting (研修期間中は大幅緩和)
   if (rateLimit) {
