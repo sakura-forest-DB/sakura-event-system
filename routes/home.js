@@ -29,17 +29,18 @@
         });
       }
 
-      // 申込可能かどうかを各イベントに追加
-      const upcomingEvents = events.map(event => ({
-        ...event,
-        canApply: !event.applicationStartDate ||
-  event.applicationStartDate <= currentDate,
-        applicationStartMessage: event.applicationStartDate
-   && event.applicationStartDate > currentDate
-          ? `申込開始: ${event.applicationStartDate.toLocal
-  eDateString('ja-JP')}から`
-          : null
-      }));
+     // 申込可能かどうかを各イベントに追加
+const upcomingEvents = events.map((event) => ({
+  ...event,
+  canApply:
+    !event.applicationStartDate ||
+    event.applicationStartDate <= currentDate,
+  applicationStartMessage:
+    event.applicationStartDate &&
+    event.applicationStartDate > currentDate
+      ? `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
+      : null,
+}));
 
       res.render('home', {
         title: '菊名桜山公園 ボランティア募集',
