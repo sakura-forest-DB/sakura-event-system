@@ -2,43 +2,43 @@
   import prisma from '../lib/prisma.js';
   const router = express.Router();
 
-  // 出店申込フォーム表示
-  router.get('/:slug/stall', async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+ // 出店申込フォーム（GET）
+router.get('/:slug/stall', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const event = await prisma.event.findUnique({ where: { slug } });
 
-      if (!event) {
-        return res.status(404).render('error', {
-          title: 'イベントが見つかりません',
-          message: '指定されたイベントが見つかりません',
-          error: { status: 404 }
-        });
-      }
-
-      if (!event.isPublic || event.status !== 'OPEN') {
-        return res.render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
-
-      res.render('apply_stall', {
-        title: `${event.title} - 出店申込`,
+    // 非公開 or CLOSED はクローズ表示（404ではなく200で）
+    if (!event || !event.isPublic || event.status !== 'OPEN') {
+      return res.status(200).render('apply-closed', {
+        title: '申込受付終了',
         event,
-        errors: [],
-        formData: {}
-      });
-    } catch (error) {
-      console.error('[stall GET] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: 'フォーム表示に失敗しました',
-        error: { status: 500 }
       });
     }
-  });
+
+    // 申込開始日前は「準備中」を表示（404ではなく200で）
+    const now = new Date();
+    if (event.applicationStartDate && event.applicationStartDate > now) {
+      return res.status(200).render('apply-closed', {
+        title: '申込準備中',
+        event,
+      });
+    }
+
+    // 受付中ならフォームを表示（event は hidden eventId で使用）
+    return res.render('apply_stall', {
+      title: `${event.title} - 出店申込`,
+      event,
+    });
+  } catch (error) {
+    console.error('[stall:get] error:', error);
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: 'サーバー側でエラーが発生しました。',
+      error: { status: 500 },
+    });
+  }
+});
 
   // 出店申込処理
   router.post('/:slug/stall', async (req, res) => {
