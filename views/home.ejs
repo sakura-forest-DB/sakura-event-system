@@ -186,22 +186,23 @@
                         <h5 class="mb-0">🎪 募集中のイベント</h5>
                     </div>
                     <div class="card-body">
-                        <% if (upcomingEvents.length > 0) { %>
-                            <% upcomingEvents.forEach(event => { %>
-                                <div class="mb-3">
-                                    <h6><%= event.title %></h6>
-                                    <p class="small text-muted mb-1">
-                                        <strong>日時:</strong> <%= new Date(event.date).toLocaleDateString('ja-JP') %>（<%= new Date(event.date).toLocaleDateString('ja-JP', { weekday: 'short' }) %>）<br>
-                                        <strong>場所:</strong> <%= event.location %>
-                                        <% if (!event.canApply && event.applicationStartMessage) { %>
-                                            <br><span class="text-info"><%= event.applicationStartMessage %></span>
-                                        <% } %>
-                                    </p>
-                                    <% if (event.canApply) { %>
-                                        <a href="/apply" class="btn btn-sm btn-outline-primary">申込む</a>
-                                    <% } else { %>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>申込準備中</button>
-                                    <% } %>
+                       <% if (upcomingEvents && upcomingEvents.length > 0) { %>
+  <a
+    href="/apply/<%= upcomingEvents[0].slug %>/stall"
+    class="btn btn-stall btn-lg me-md-2">🏪 出店申込</a>
+
+  <a
+    href="/apply/<%= upcomingEvents[0].slug %>/performer"
+    class="btn btn-performer btn-lg me-md-2">🎭 出演申込</a>
+
+  <a
+    href="/apply/<%= upcomingEvents[0].slug %>"
+    class="btn btn-view-all btn-lg">イベント申込</a>
+<% } else { %>
+  <button class="btn btn-stall btn-lg me-md-2" disabled>🏪 出店申込（準備中）</button>
+  <button class="btn btn-performer btn-lg me-md-2" disabled>🎭 出演申込（準備中）</button>
+  <button class="btn btn-view-all btn-lg" disabled>イベント申込（準備中）</button>
+<% } %>
                                 </div>
                             <% }); %>
                         <% } else { %>
