@@ -40,170 +40,67 @@
     }
   });
 
-  // 出演申込処理
-  router.post('/:slug/performer', async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+// 送信: 出演申込
+router.post('/:slug/performer/submit', async (req, res) => {
+  try {
+    const { slug } = req.params;
 
-      if (!event || !event.isPublic || event.status !==
-  'OPEN') {
-        return res.status(400).render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
+    // イベント取得（サーバーサイドで確定）
+    const event = await prisma.event.findUnique({ where: { slug } });
 
-      const {
-        groupName,
-        representative,
-        address,
-        email,
-        phone,
-        performance,
-        performerCount,
-        slotCount,
-        vehicleCount,
-        vehicleNumbers,
-        audioSourceOnly,
-        rentalAmp,
-        rentalMic,
-        questions,
-        privacyConsent,
-        marketingConsent
-      } = req.body;
+    if (!event) {
+      return res.status(404).render('error', {
+        title: 'イベントが見つかりません',
+        message: '指定されたイベントが見つかりません。',
+        error: { status: 404 },
+      });
+    }
 
-      const errors = [];
-
-      // バリデーション
-      if (!groupName) errors.push('参加団体名は必須です');
-      if (!representative)
-  errors.push('代表者名は必須です');
-      if (!email) errors.push('メールアドレスは必須です');
-      if (email &&
-  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-
-  errors.push('有効なメールアドレスを入力してください');
-      }
-      if (!phone) errors.push('電話番号は必須です');
-      if (!performance) errors.push('出演内容は必須です');
-      if (!privacyConsent)
-  errors.push('個人情報の利用について同意が必要です');
-
-      if (errors.length > 0) {
-        return res.render('apply_performer', {
-          title: `${event.title} - 出演申込`,
-          event,
-          errors,
-          formData: req.body
-        });
-      }
-
-      // エラーがない場合は確認画面を表示
-      res.render('apply_performer_confirm', {
-        title: `${event.title} - 出演申込内容確認`,
-        formData: req.body,
+    // 非公開 or 受付終了はクローズ画面
+    if (!event.isPublic || event.status !== 'OPEN') {
+      return res.render('apply-closed', {
+        title: '申込受付終了',
         event,
-        isPreview: false
-      });
-
-    } catch (error) {
-      console.error('[performer POST] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: '申込処理中にエラーが発生しました',
-        error: { status: 500 }
       });
     }
-  });
 
-  // 出演申込最終送信処理
-  router.post('/:slug/performer/submit', async (req, res)
-  => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+    // ボディから必要項目を取り、eventId はサーバー側で上書き
+    const payload = {
+      groupName: req.body.groupName,
+      representative: req.body.representative,
+      address: req.body.address || null,
+      email: req.body.email,
+      phone: req.body.phone || null,
+      performance: req.body.performance,
+      performerCount: req.body.performerCount ? Number(req.body.performerCount) : null,
+      slotCount: req.body.slotCount ? Number(req.body.slotCount) : null,
+      vehicleCount: req.body.vehicleCount ? Number(req.body.vehicleCount) : null,
+      vehicleNumbers: req.body.vehicleNumbers || null,
+      audioSourceOnly: req.body.audioSourceOnly ? Number(req.body.audioSourceOnly) : null,
+      rentalAmp: req.body.rentalAmp ? Number(req.body.rentalAmp) : null,
+      rentalMic: req.body.rentalMic ? Number(req.body.rentalMic) : null,
+      questions: req.body.questions || null,
 
-      if (!event || !event.isPublic || event.status !==
-  'OPEN') {
-        return res.status(400).render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
+      // 同意
+      privacyConsent: req.body.privacyConsent === 'on',
+      marketingConsent: req.body.marketingConsent === 'on',
 
-      const {
-        groupName,
-        representative,
-        address,
-        email,
-        phone,
-        performance,
-        performerCount,
-        slotCount,
-        vehicleCount,
-        vehicleNumbers,
-        audioSourceOnly,
-        rentalAmp,
-        rentalMic,
-        questions,
-        privacyConsent,
-        marketingConsent
-      } = req.body;
+      // サーバー側で確定
+      eventId: event.id,
+    };
 
-      // 初回申込スナップショット用データ
-      const originalPayload = JSON.stringify(req.body);
-      const submittedAt = new Date();
+    await prisma.performerApplication.create({ data: payload });
 
-      // 出演申込作成（サーバーサイドでeventIdを決定）
-      const performerApplication = await
-  prisma.performerApplication.create({
-        data: {
-          groupName,
-          representative,
-          address: address || null,
-          email,
-          phone: phone || null,
-          eventId: event.id, // サーバーサイドで決定
-          performance,
-          performerCount: performerCount ?
-  parseInt(performerCount) : null,
-          slotCount: slotCount ? parseInt(slotCount) :
-  null,
-          vehicleCount: vehicleCount ?
-  parseInt(vehicleCount) : null,
-          vehicleNumbers: vehicleNumbers || null,
-          audioSourceOnly: audioSourceOnly ?
-  parseInt(audioSourceOnly) : null,
-          rentalAmp: rentalAmp ? parseInt(rentalAmp) :
-  null,
-          rentalMic: rentalMic ? parseInt(rentalMic) :
-  null,
-          questions: questions || null,
-          privacyConsent: privacyConsent === 'on',
-          marketingConsent: marketingConsent === 'on',
-          originalPayload,
-          originalSubmittedAt: submittedAt
-        }
-      });
-
-      res.render('thanks', {
-        title: `${event.title} - 出演申込完了`,
-        type: 'performer',
-        application: performerApplication,
-        event
-      });
-
-    } catch (error) {
-      console.error('[performer submit] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: '申込送信中にエラーが発生しました',
-        error: { status: 500 }
-      });
-    }
-  });
-
-  export default router;
+    return res.render('apply_thanks', {
+      title: '送信が完了しました',
+      event,
+    });
+  } catch (error) {
+    console.error('[performer submit] error:', error);
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: '送信処理でエラーが発生しました。',
+      error: { status: 500 },
+    });
+  }
+});
