@@ -109,9 +109,9 @@ import applyPerformerRoutes from './routes/apply-performer.js'; // /apply/:slug/
 app.use('/', homeRoutes);
 app.use('/register', registerRoutes);
 app.use('/admin', adminRoutes);
-app.use('/apply', applyBaseRoutes);          // keep base 404 handler
-app.use('/apply', applyStallRoutes);         // expect router.get('/:slug/stall', ...)
-app.use('/apply', applyPerformerRoutes);     // expect router.get('/:slug/performer', ...)
+app.use('/apply', applyBaseRoutes);          // ← ランディングを返す apply.js
+app.use('/apply', applyStallRoutes);         // /apply/:slug/stall
+app.use('/apply', applyPerformerRoutes);     // /apply/:slug/performer
 
 // Health check (Render)
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
