@@ -209,35 +209,37 @@
                 </div>
             </div>
         </div>
-        <section class="container my-5">
-            <h2 class="mb-4">募集中のイベント</h2>
-            <% if (upcomingEvents && upcomingEvents.length > 0) { %>
-                <div class="row">
-                    <% upcomingEvents.forEach(event => { %>
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="card shadow-sm h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= event.title %></h5>
-                                    <p class="card-text">
-                                        開催日：<%= new Date(event.date).toLocaleDateString('ja-JP') %><br>
-                                        会場：<%= event.location || '未定' %>
-                                    </p>
-                                    <% if (new Date(event.applicationStartDate) <= new Date()) { %>
-                                        <a href="/apply/<%= event.slug %>" class="btn btn-primary w-100">申し込む</a>
-                                    <% } else { %>
-                                        <button class="btn btn-secondary w-100" disabled>
-                                            申込開始：<%= new Date(event.applicationStartDate).toLocaleDateString('ja-JP') %>
-                                        </button>
-                                    <% } %>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-            <% } else { %>
-                <p class="text-muted">現在募集中のイベントはありません。</p>
-            <% } %>
-        </section>
+     <section class="container my-5">
+  <h2 class="mb-4">募集中のイベント</h2>
+
+  <% if (upcomingEvents && upcomingEvents.length > 0) { %>
+    <div class="row">
+      <% upcomingEvents.forEach(event => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= event.title %></h5>
+              <p class="card-text">
+                開催日：<%= new Date(event.date).toLocaleDateString('ja-JP') %><br>
+                会場：<%= event.location || '未定' %>
+              </p>
+
+              <% if (!event.applicationStartDate || new Date(event.applicationStartDate) <= new Date()) { %>
+                <a href="/apply/<%= event.slug %>" class="btn btn-primary w-100">申し込む</a>
+              <% } else { %>
+                <button class="btn btn-secondary w-100" disabled>
+                  申込開始：<%= new Date(event.applicationStartDate).toLocaleDateString('ja-JP') %>
+                </button>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p class="text-muted">現在募集中のイベントはありません。</p>
+  <% } %>
+</section>
     </main>
 
     <footer class="py-3 mt-4">
