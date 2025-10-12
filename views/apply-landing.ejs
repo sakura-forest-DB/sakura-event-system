@@ -1,0 +1,30 @@
+<%- include('partials/header', { title }) %>
+
+<div class="container py-4">
+  <h1 class="mb-3"><%= event.title %></h1>
+  <p class="text-muted mb-4">
+    開催日：<%= new Date(event.date).toLocaleDateString('ja-JP') %>
+  </p>
+
+  <div class="d-grid gap-2 d-md-flex">
+    <a class="btn btn-stall btn-lg me-md-2"
+       href="/apply/<%= event.slug %>/stall">🏪 出店申込</a>
+    <a class="btn btn-performer btn-lg"
+       href="/apply/<%= event.slug %>/performer">🎭 出演申込</a>
+  </div>
+
+  <hr class="my-4">
+
+  <p>
+    申込開始日：
+    <% if (event.applicationStartDate) { %>
+      <strong><%= new Date(event.applicationStartDate).toLocaleDateString('ja-JP') %></strong>
+    <% } else { %>
+      <span class="text-muted">設定なし</span>
+    <% } %>
+  </p>
+
+  <p>ステータス：<code><%= event.status %></code></p>
+</div>
+
+<%- include('partials/footer') %>
