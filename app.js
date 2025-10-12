@@ -7,25 +7,24 @@
   import { PrismaClient } from '@prisma/client';
 
   // --- optional helmet ---
-  let helmet;
-  try {
-    const mod = await import('helmet');  // type:module 
-  なのでOK
-    helmet = mod.default || mod;
-  } catch (e) {
-console.warn('helmet not available; starting without it');
-  }
-  // --- end optional helmet ---
+let helmet;
+try {
+  const mod = await import('helmet');  // type:module なのでOK
+  helmet = mod.default || mod;
+} catch (e) {
+  console.warn('helmet not available; starting without it');
+}
+// --- end optional helmet ---
 
-  // --- optional rate-limit ---
-  let rateLimit;
-  try {
-    const mod = await import('express-rate-limit');
-    rateLimit = mod.default || mod;
-  } catch (e) {
-    console.warn('express-rate-limit not available; continuing without rate limiting');
-  }
-  // --- end optional rate-limit ---
+ // --- optional rate-limit ---
+let rateLimit;
+try {
+  const mod = await import('express-rate-limit');
+  rateLimit = mod.default || mod;
+} catch (e) {
+  console.warn('express-rate-limit not available; continuing without rate limiting');
+}
+// --- end optional rate-limit ---
 
   // Import routes
   import homeRoutes from './routes/home.js';
@@ -59,8 +58,7 @@ console.warn('helmet not available; starting without it');
     if (!req.path.startsWith('/admin')) return next();
 
     // デフォルト：存在を隠す
-    if (!ADMIN_ENABLED) return res.status(404).send('Not 
-  Found');
+   if (!ADMIN_ENABLED) return res.status(404).send('Not Found');
 
     // Basic 認証（HTTPS 前提 / Render は https 提供）
     const auth = req.headers.authorization || '';
