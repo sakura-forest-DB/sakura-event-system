@@ -16,13 +16,24 @@ try {
 }
 // --- end optional helmet ---
 
- // --- optional rate-limit ---
+// --- optional rate-limit ---
 let rateLimit;
 try {
   const mod = await import('express-rate-limit');
   rateLimit = mod.default || mod;
-} catch (e) {
+} catch {
   console.warn('express-rate-limit not available; continuing without rate limiting');
+}
+
+if (rateLimit) {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 300,                  // 同時アクセス上限（必要に応じて調整）
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Too many requests from this IP, please try again later.', // ← 1行で書く
+  });
+  app.use(limiter);
 }
 // --- end optional rate-limit ---
 
