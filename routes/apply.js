@@ -40,13 +40,10 @@ import express from 'express';
       const canApply = !event.applicationStartDate ||
   event.applicationStartDate <= currentDate;
 
-      if (!canApply) {
+     if (!canApply) {
         return res.render('apply-closed', {
           title: '申込開始前',
-          event,
-          applicationStartMessage: '申込開始: ' +
-  event.applicationStartDate.toLocaleDateString('ja-JP') +
-  'から'
+          event
         });
       }
 
