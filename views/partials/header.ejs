@@ -12,16 +12,20 @@
   </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <nav class="navbar navbar-expand-lg bg-light border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container">
       <a class="navbar-brand" href="/">菊名桜山公園</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="メニュー切替">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div id="mainNav" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
           <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
+          <!-- どちらもランディング /apply に統一（404回避） -->
+          <li class="nav-item"><a class="nav-link" href="/apply">出店申込</a></li>
+          <li class="nav-item"><a class="nav-link" href="/apply">出演申込</a></li>
+          <!-- イベント一覧/申込入口として残す場合も /apply に統一 -->
           <li class="nav-item"><a class="nav-link" href="/apply">イベント申込</a></li>
         </ul>
       </div>
