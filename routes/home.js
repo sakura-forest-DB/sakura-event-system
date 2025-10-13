@@ -44,18 +44,4 @@ router.get('/', async (req, res) => {
     }
   });
 
-      res.render('home', {
-        title: 'きくな桜まつり実行委員会',
-        events
-      });
-    } catch (error) {
-      console.error('Home route error:', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: 'ページの読み込みに失敗しました',
-        error: { status: 500 }
-      });
-    }
-  });
-
   export default router;
