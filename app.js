@@ -23,8 +23,7 @@
     const mod = await import('express-rate-limit');
     rateLimit = mod.default || mod;
   } catch (e) {
-    console.warn('express-rate-limit not available; 
-  continuing without rate limiting');
+    console.warn('express-rate-limit not available; continuing without rate limiting');
   }
   // --- end optional rate-limit ---
 
