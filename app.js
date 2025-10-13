@@ -134,8 +134,7 @@
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // 
-  HTTPS必須（本番環境）
+      secure: process.env.NODE_ENV === 'production', // HTTPS必須（本番環境）
       httpOnly: true, // XSS対策
       maxAge: 24 * 60 * 60 * 1000 // 24時間
     }
@@ -153,14 +152,10 @@
     });
     console.log('[DEBUG] Setting up routes with rate 
   limiting');
-    app.use('/register', formLimiter, registerRoutes); // 
-  フォーム送信制限
-    app.use('/apply', formLimiter, applyStallRoutes); // 
-  フォーム送信制限
-    app.use('/apply', formLimiter, applyPerformerRoutes);
-  // フォーム送信制限
-    app.use('/apply', formLimiter, applyRoutes); // 
-  フォーム送信制限
+    app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
+    app.use('/apply', formLimiter, applyStallRoutes); // フォーム送信制限
+    app.use('/apply', formLimiter, applyPerformerRoutes); // フォーム送信制限
+    app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
   } else {
     app.use('/register', registerRoutes);
     app.use('/apply', applyStallRoutes);
@@ -176,8 +171,7 @@
     res.status(500).render('error', {
       title: 'エラー',
       message: 'サーバーエラーが発生しました',
-      error: process.env.NODE_ENV === 'development' ? err :
-   {}
+      error: process.env.NODE_ENV === 'development' ? err : {}
     });
   });
 
