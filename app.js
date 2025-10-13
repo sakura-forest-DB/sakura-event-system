@@ -145,13 +145,11 @@
   if (rateLimit) {
     const formLimiter = rateLimit({
       windowMs: 5 * 60 * 1000, // 5分
-      max: process.env.NODE_ENV === 'production' ? 20 :
-  100, // 研修中は20回まで
+      max: process.env.NODE_ENV === 'production' ? 20 : 100, // 研修中は20回まで
       message: 'Too many form submissions, please try again later.',
       trustProxy: true // Render環境用の設定
     });
-    console.log('[DEBUG] Setting up routes with rate 
-  limiting');
+    console.log('[DEBUG] Setting up routes with rate limiting');
     app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
     app.use('/apply', formLimiter, applyStallRoutes); // フォーム送信制限
     app.use('/apply', formLimiter, applyPerformerRoutes); // フォーム送信制限
