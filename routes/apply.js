@@ -45,7 +45,7 @@
           title: '申込開始前',
           event,
           applicationStartMessage: `申込開始:
-          ${event.appli cationStartDate.toLocaleDateString('ja-JP')}から`
+          ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
