@@ -2,46 +2,60 @@
   import prisma from '../lib/prisma.js';
   const router = express.Router();
 
- // 出店申込フォーム（GET）
-router.get('/:slug/stall', async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const event = await prisma.event.findUnique({ where: { slug } });
+  // 出店申込フォーム表示
+  router.get('/stall/:slug', async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const event = await prisma.event.findUnique({ where:
+  { slug } });
 
-    // 非公開 or CLOSED はクローズ表示（404ではなく200で）
-    if (!event || !event.isPublic || event.status !== 'OPEN') {
-      return res.status(200).render('apply-closed', {
-        title: '申込受付終了',
+      if (!event) {
+        return res.status(404).render('error', {
+          title: 'イベントが見つかりません',
+          message: '指定されたイベントが見つかりません',
+          error: { status: 404 }
+        });
+      }
+
+      if (!event.isPublic || event.status !== 'OPEN') {
+        return res.render('apply-closed', {
+          title: '申込受付終了',
+          event
+        });
+      }
+
+      // 申込開始日をチェック
+      const currentDate = new Date();
+      const canApply = !event.applicationStartDate ||
+  event.applicationStartDate <= currentDate;
+
+      if (!canApply) {
+        return res.render('apply-closed', {
+          title: '申込開始前',
+          event,
+          applicationStartMessage: `申込開始: ${event.appli
+  cationStartDate.toLocaleDateString('ja-JP')}から`
+        });
+      }
+
+      res.render('apply_stall', {
+        title: `${event.title} - 出店申込`,
         event,
+        errors: [],
+        formData: {}
+      });
+    } catch (error) {
+      console.error('[stall GET] error', error);
+      res.status(500).render('error', {
+        title: 'エラー',
+        message: 'フォーム表示に失敗しました',
+        error: { status: 500 }
       });
     }
-
-    // 申込開始日前は「準備中」を表示（404ではなく200で）
-    const now = new Date();
-    if (event.applicationStartDate && event.applicationStartDate > now) {
-      return res.status(200).render('apply-closed', {
-        title: '申込準備中',
-        event,
-      });
-    }
-
-    // 受付中ならフォームを表示（event は hidden eventId で使用）
-    return res.render('apply_stall', {
-      title: `${event.title} - 出店申込`,
-      event,
-    });
-  } catch (error) {
-    console.error('[stall:get] error:', error);
-    return res.status(500).render('error', {
-      title: 'エラー',
-      message: 'サーバー側でエラーが発生しました。',
-      error: { status: 500 },
-    });
-  }
-});
+  });
 
   // 出店申込処理
-  router.post('/:slug/stall', async (req, res) => {
+  router.post('/stall/:slug', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -52,6 +66,20 @@ router.get('/:slug/stall', async (req, res) => {
         return res.status(400).render('apply-closed', {
           title: '申込受付終了',
           event
+        });
+      }
+
+      // 申込開始日をチェック
+      const currentDate = new Date();
+      const canApply = !event.applicationStartDate ||
+  event.applicationStartDate <= currentDate;
+
+      if (!canApply) {
+        return res.status(400).render('apply-closed', {
+          title: '申込開始前',
+          event,
+          applicationStartMessage: `申込開始: ${event.appli
+  cationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
@@ -131,7 +159,7 @@ router.get('/:slug/stall', async (req, res) => {
   });
 
   // 出店申込最終送信処理
-  router.post('/:slug/stall/submit', async (req, res) => {
+  router.post('/stall/:slug/submit', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -142,6 +170,20 @@ router.get('/:slug/stall', async (req, res) => {
         return res.status(400).render('apply-closed', {
           title: '申込受付終了',
           event
+        });
+      }
+
+      // 申込開始日をチェック
+      const currentDate = new Date();
+      const canApply = !event.applicationStartDate ||
+  event.applicationStartDate <= currentDate;
+
+      if (!canApply) {
+        return res.status(400).render('apply-closed', {
+          title: '申込開始前',
+          event,
+          applicationStartMessage: `申込開始: ${event.appli
+  cationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
