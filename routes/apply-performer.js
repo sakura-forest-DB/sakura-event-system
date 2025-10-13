@@ -145,7 +145,7 @@ import express from 'express';
   });
 
   // 出演申込最終送信処理
-  router.post('/performer/:slug/submit', async (req, res) => {
+ router.post('/performer/:slug/submit', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
