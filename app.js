@@ -59,8 +59,7 @@
     if (!req.path.startsWith('/admin')) return next();
 
     // デフォルト：存在を隠す
-    if (!ADMIN_ENABLED) return res.status(404).send('Not 
-  Found');
+    if (!ADMIN_ENABLED) return res.status(404).send('Not Found');
 
     // Basic 認証（HTTPS 前提 / Render は https 提供）
     const auth = req.headers.authorization || '';
@@ -99,8 +98,7 @@
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15分
       max: 500, // 研修中は500回まで大幅緩和
-      message: 'Too many requests from this IP, please try 
-  again later.',
+      message: 'Too many requests from this IP, please try again later.',
       standardHeaders: true,
       legacyHeaders: false,
       trustProxy: true // Render環境用の設定
@@ -108,8 +106,7 @@
     app.use(limiter);
 
   } else {
-    console.warn('Rate limiting disabled - 
-  express-rate-limit not available');
+    console.warn('Rate limiting disabled - express-rate-limit not available');
   }
 
   // Make prisma available in req
@@ -151,8 +148,7 @@
       windowMs: 5 * 60 * 1000, // 5分
       max: process.env.NODE_ENV === 'production' ? 20 :
   100, // 研修中は20回まで
-      message: 'Too many form submissions, please try again
-   later.',
+      message: 'Too many form submissions, please try again later.',
       trustProxy: true // Render環境用の設定
     });
     console.log('[DEBUG] Setting up routes with rate 
