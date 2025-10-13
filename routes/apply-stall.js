@@ -3,7 +3,7 @@
   const router = express.Router();
 
   // 出店申込フォーム表示
-  router.get('/stall/:slug', async (req, res) => {
+  router.get('/:slug/stall', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -54,7 +54,7 @@
   });
 
   // 出店申込処理
-  router.post('/stall/:slug', async (req, res) => {
+  router.post('/:slug/stall', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -157,7 +157,7 @@
   });
 
   // 出店申込最終送信処理
-  router.post('/stall/:slug/submit', async (req, res) => {
+  router.post('/:slug/stall/submit', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:

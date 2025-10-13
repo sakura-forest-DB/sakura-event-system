@@ -3,7 +3,7 @@ import express from 'express';
   const router = express.Router();
 
   // 出演申込フォーム表示
-  router.get('/performer/:slug', async (req, res) => {
+  router.get('/:slug/performer', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -54,7 +54,7 @@ import express from 'express';
   });
 
   // 出演申込処理
-  router.post('/performer/:slug', async (req, res) => {
+  router.post('/:slug/performer', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
@@ -145,7 +145,7 @@ import express from 'express';
   });
 
   // 出演申込最終送信処理
- router.post('/performer/:slug/submit', async (req, res) => {
+ router.post('/:slug/performer/submit', async (req, res) => {
     try {
       const { slug } = req.params;
       const event = await prisma.event.findUnique({ where:
