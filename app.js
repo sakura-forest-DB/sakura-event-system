@@ -83,9 +83,9 @@ app.use(session({
 // Routes
 app.use('/', homeRoutes);
 app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
-app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
-app.use('/apply/stall', formLimiter, applyStallRoutes); // フォーム送信制限
-app.use('/apply/performer', formLimiter, applyPerformerRoutes); // フォーム送信制限
+ app.use('/apply', formLimiter, applyBaseRoutes);
+  app.use('/apply', formLimiter, applyStallRoutes);
+  app.use('/apply', formLimiter, applyPerformerRoutes);
 app.use('/status', statusRoutes);
 app.use('/admin', adminRoutes);
 
