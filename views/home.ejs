@@ -44,11 +44,11 @@
     <h2 class="mb-4 text-center">募集中のイベント</h2>
 
     <% if (upcomingEvents && upcomingEvents.length > 0) { %>
-      <div class="row g-4">
+      <div class="row g-4 justify-content-center">
         <% upcomingEvents.forEach(function(event){ %>
-          <div class="col-md-6 col-lg-4">
+          <div class="col-md-8 col-lg-6">
             <div class="card shadow-sm h-100">
-              <div class="card-body d-flex flex-column">
+              <div class="card-body d-flex flex-column text-center">
                 <h5 class="card-title text-success fw-bold"><%= event.title %></h5>
                 <p class="card-text">
                   <strong>📅 開催日：</strong><%= new Date(event.date).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }) %><br>
