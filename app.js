@@ -13,8 +13,7 @@
   なのでOK
     helmet = mod.default || mod;
   } catch (e) {
-    console.warn('helmet not available; starting without 
-  it');
+  console.warn('helmet not available; starting without it');
   }
   // --- end optional helmet ---
 
