@@ -80,9 +80,9 @@
   // Security middleware
   if (helmet) {
     app.use(helmet({
-      contentSecurityPolicy: false // 
-  CSPを無効化（フォーム動作のため）
+      contentSecurityPolicy: false // CSPを無効化（フォーム動作のため）
     }));
+
   } else {
     // 簡易的なセキュリティヘッダを付与（暫定）
     app.use((req, res, next) => {
