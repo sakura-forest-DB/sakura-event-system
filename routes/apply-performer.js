@@ -33,8 +33,7 @@ import express from 'express';
         return res.render('apply-closed', {
           title: '申込開始前',
           event,
-          applicationStartMessage: `申込開始: ${event.appli
-  cationStartDate.toLocaleDateString('ja-JP')}から`
+          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
@@ -78,8 +77,7 @@ import express from 'express';
         return res.status(400).render('apply-closed', {
           title: '申込開始前',
           event,
-          applicationStartMessage: `申込開始: ${event.appli
-  cationStartDate.toLocaleDateString('ja-JP')}から`
+          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
@@ -171,8 +169,7 @@ import express from 'express';
         return res.status(400).render('apply-closed', {
           title: '申込開始前',
           event,
-          applicationStartMessage: `申込開始: ${event.appli
-  cationStartDate.toLocaleDateString('ja-JP')}から`
+          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
         });
       }
 
