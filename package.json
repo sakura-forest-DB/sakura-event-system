@@ -21,7 +21,8 @@
     "db:studio:prod": "dotenv -e .env.production -- npx prisma studio",
     "db:studio:training": "dotenv -e .env.training -- npx prisma studio",
     "setup:render": "node scripts/render-setup.js",
-    "cc": "claude"
+    "cc": "claude",
+    "create-event": "node create-event-prod.js"
   },
   "engines": {
     "node": "20.x"
