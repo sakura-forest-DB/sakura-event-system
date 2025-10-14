@@ -248,7 +248,7 @@
                                 <% } %>
                                 <button type="submit" class="btn btn-success btn-lg me-3">✅ 内容確認後、送信する</button>
                             </form>
-                            <form method="POST" action="/apply/<form method="POST" action="/apply/<%= event.slug %>/stall/edit" class="d-inline">stall/edit" class="d-inline">
+                            <form method="POST" action="/apply/<%= event.slug %>/stall/edit" class="d-inline">stall/edit" class="d-inline">
                                 <% for (const [key, value] of Object.entries(formData)) { %>
                                     <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
                                 <% } %>
