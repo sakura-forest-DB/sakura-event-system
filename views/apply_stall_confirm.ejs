@@ -266,6 +266,24 @@
         </div>
     </main>
 
+<div class="text-center mt-4">
+  <!-- 送信 -->
+  <form method="POST" action="/apply/<%= event.slug %>/stall/submit" class="d-inline">
+    <% for (const [key, value] of Object.entries(formData)) { %>
+      <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
+    <% } %>
+    <button type="submit" class="btn btn-success btn-lg me-3">✅ 内容確認後、送信する</button>
+  </form>
+
+  <!-- 戻って修正 -->
+  <form method="POST" action="/apply/<%= event.slug %>/stall/edit" class="d-inline">
+    <% for (const [key, value] of Object.entries(formData)) { %>
+      <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
+    <% } %>
+    <button type="submit" class="btn btn-outline-secondary btn-lg">✏️ 戻って修正する</button>
+  </form>
+</div>
+
     <footer class="py-3 mt-4">
         <div class="container text-center text-muted">
             <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
