@@ -269,4 +269,72 @@
     }
   });
 
+// 送信（DB保存）
+router.post('/:slug/stall/submit', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const prisma = req.prisma;
+
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event || !event.isPublic || event.status !== 'OPEN') {
+      return res.status(404).render('apply-closed', { title: '申込受付終了', event });
+    }
+
+    // 必要なら型変換（数値系）
+    const toInt = v => (v === '' || v == null ? null : parseInt(v, 10));
+    const toFloat = v => (v === '' || v == null ? null : parseFloat(v));
+
+    const data = {
+      eventId: event.id,
+      groupName: req.body.groupName,
+      representative: req.body.representative,
+      address: req.body.address || null,
+      email: req.body.email,
+      phone: req.body.phone,
+      boothType: req.body.boothType,
+      items: req.body.items || null,
+      priceRangeMin: toInt(req.body.priceRangeMin),
+      priceRangeMax: toInt(req.body.priceRangeMax),
+      boothCount: toInt(req.body.boothCount),
+      tentWidth: toFloat(req.body.tentWidth),
+      tentDepth: toFloat(req.body.tentDepth),
+      tentHeight: toFloat(req.body.tentHeight),
+      vehicleCount: toInt(req.body.vehicleCount),
+      vehicleType: req.body.vehicleType || null,
+      vehicleNumbers: req.body.vehicleNumbers || null,
+      rentalTables: toInt(req.body.rentalTables),
+      rentalChairs: toInt(req.body.rentalChairs),
+      questions: req.body.questions || null,
+      privacyConsent: !!req.body.privacyConsent,
+      marketingConsent: !!req.body.marketingConsent,
+      originalPayload: JSON.stringify(req.body),
+      originalSubmittedAt: new Date()
+    };
+
+    await prisma.stallApplication.create({ data });
+    return res.render('apply_stall_success', { title: '出店申込完了', event });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).render('error', { title: 'エラー', message: '送信に失敗しました' });
+  }
+});
+
+// 戻って修正（入力画面に差し戻し）
+router.post('/:slug/stall/edit', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const prisma = req.prisma;
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event) return res.status(404).render('error', { title: 'エラー', message: 'イベントが見つかりません' });
+
+    return res.render('apply_stall', {
+      title: `${event.title} - 出店申込（修正）`,
+      event,
+      formData: req.body
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).render('error', { title: 'エラー', message: '修正画面の表示に失敗しました' });
+  }
+});
   export default router;
