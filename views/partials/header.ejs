@@ -69,6 +69,70 @@
     .card:hover {
       transform: translateY(-5px);
     }
+/* ====== Christmas 2025 theme helpers ====== */
+/* ※ 既存のトップのボタン色に合わせたい場合はこの2色を調整してください */
+:root{
+  /* 出店（濃いピンク系） */
+  --stall-main: #e83e8c;     /* 例: Bootstrapのpink。今の濃いピンクに近ければOK */
+  --stall-tint: #fde6f1;     /* 薄いピンク（背景用） */
+
+  /* 出演（紫系） */
+  --performer-main: #6f42c1; /* 例: Bootstrapのpurple。今の紫に近ければOK */
+  --performer-tint: #efe7fb; /* 薄い紫（背景用） */
+
+  /* 共通（ビュー“全体”の薄い背景を使うとき） */
+  --hero-bg: #f5fbf6;        /* 既存トップの淡い緑に寄せたい場合はここを調整 */
+}
+
+/* メインCTA類（既存のクラス名に寄せて整え） */
+.btn-stall {
+  background: var(--stall-main);
+  border-color: var(--stall-main);
+  color:#fff;
+}
+.btn-stall:hover { filter: brightness(0.92); color:#fff; }
+
+.btn-performer {
+  background: var(--performer-main);
+  border-color: var(--performer-main);
+  color:#fff;
+}
+.btn-performer:hover { filter: brightness(0.92); color:#fff; }
+
+.btn-view-all{
+  background:#2d5a27;      /* 既存トップの緑ボタンに合わせる */
+  border-color:#2d5a27;
+  color:#fff;
+}
+.btn-view-all:hover { filter: brightness(0.92); color:#fff; }
+
+/* ヒーローを中央寄せ（スマホ対応） */
+.hero-center {
+  text-align:center;
+  padding: 2.5rem 0;
+  background: var(--hero-bg);
+  border-radius: .75rem;
+}
+
+/* フォームページ用の薄色背景（ページ全体に敷く） */
+.form-tint--stall    { background: var(--stall-tint);    }
+.form-tint--performer{ background: var(--performer-tint);}
+.form-tint__wrap{
+  /* 画面幅いっぱいの薄色 + 中央にカード */
+  padding: 1.25rem 0;
+}
+.form-card{
+  background:#fff;
+  border-radius:.75rem;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  padding:1rem;
+}
+
+/* 上部のリンク群を“ボタン列”化（スマホ折返し） */
+.top-links{
+  gap:.5rem;
+  flex-wrap: wrap;
+}
   </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
