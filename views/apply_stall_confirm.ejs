@@ -238,8 +238,29 @@
                                 </div>
                             </div>
                         </div>
-
-                        
+=======
+                        <!-- 確認・送信ボタン -->
+                        <div class="text-center mt-4">
+                            <% if (!isPreview) { %>
+                            <form method="POST" action="/apply/<%= event.slug %>/stall/submit" class="d-inline">
+                                <% for (const [key, value] of Object.entries(formData)) { %>
+                                    <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
+                                <% } %>
+                                <button type="submit" class="btn btn-success btn-lg me-3">✅ 内容確認後、送信する</button>
+                            </form>
+                            <form method="POST" action="/apply/<form method="POST" action="/apply/<%= event.slug %>/stall/edit" class="d-inline">stall/edit" class="d-inline">
+                                <% for (const [key, value] of Object.entries(formData)) { %>
+                                    <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
+                                <% } %>
+                                <button type="submit" class="btn btn-outline-secondary btn-lg">✏️ 戻って修正する</button>
+                            </form>
+                            <% } else { %>
+                            <div class="alert alert-warning">
+                                <strong>プレビューモード</strong> - このページは管理者用のプレビューです
+                            </div>
+                            <% } %>
+                        </div>
+>>>>>>> 3353060 (fix(stall-confirm): correct form actions to slug-based routes)
                     </div>
                 </div>
             </div>
