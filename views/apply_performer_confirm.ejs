@@ -166,24 +166,7 @@
               </div>
             </div>
 
-            <!-- ボタン -->
-            <div class="text-center mt-4">
-              <!-- 送信（本登録） -->
-              <form method="POST" action="/apply/<%= event.slug %>/performer/submit" class="d-inline">
-                <% for (const [key, value] of Object.entries(formData)) { %>
-                  <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
-                <% } %>
-                <button type="submit" class="btn btn-success btn-lg me-3">✅ この内容で送信</button>
-              </form>
 
-              <!-- 戻って修正 -->
-              <form method="POST" action="/apply/<%= event.slug %>/performer/edit" class="d-inline">
-                <% for (const [key, value] of Object.entries(formData)) { %>
-                  <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
-                <% } %>
-                <button type="submit" class="btn btn-outline-secondary btn-lg">✏️ 戻って修正</button>
-              </form>
-            </div>
           </div><!-- /.card-body -->
         </div>
       </div>
