@@ -2,23 +2,15 @@ import express from 'express';
   import prisma from '../lib/prisma.js';
   const router = express.Router();
 
-// 受付可否：公開・OPEN・申込開始日OK
-function isAccepting(event) {
-  if (!event) return false;
-  if (!event.isPublic) return false;
-  if (event.status !== 'OPEN') return false;
-  if (event.applicationStartDate && new Date(event.applicationStartDate) > new Date()) return false;
-  return true;
-}
-
-  // 受付中か判定（公開+開始日/終了日）
+// 受付中判定
 const isAccepting = (event) => {
+  if (!event) return false;
   const now = new Date();
-  if (!event || !event.isPublic) return false;
-  if (event.applicationStartDate && now < new Date(event.applicationStartDate)) return false;
-  if (event.applicationEndDate && now > new Date(event.applicationEndDate)) return false;
-  return true;
+  const started   = !event.applicationStartDate || now >= new Date(event.applicationStartDate);
+  const notEnded  = !event.applicationEndDate   || now <= new Date(event.applicationEndDate);
+  return event.isPublic && event.status === 'OPEN' && started && notEnded;
 };
+
   // 出演申込フォーム表示
   router.get('/:slug/performer', async (req, res) => {
     try {
