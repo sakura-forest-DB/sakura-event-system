@@ -28,14 +28,13 @@
   // --- end optional rate-limit ---
 
   // Import routes
-  import homeRoutes from './routes/home.js';
-  import registerRoutes from './routes/register.js';
-  import applyRoutes from './routes/apply.js';
-  import applyStallRoutes from './routes/apply-stall.js';
-  import applyPerformerRoutes from
-  './routes/apply-performer.js';
-  import statusRoutes from './routes/status.js';
-  import adminRoutes from './routes/admin.js';
+import homeRoutes from './routes/home.js';
+import registerRoutes from './routes/register.js';
+import applyBaseRoutes from './routes/apply.js';
+import applyStallRoutes from './routes/apply-stall.js';
+import applyPerformerRoutes from './routes/apply-performer.js';
+import statusRoutes from './routes/status.js';
+import adminRoutes from './routes/admin.js';
 
   dotenv.config();
 
@@ -150,15 +149,17 @@
       trustProxy: true // Render環境用の設定
     });
     console.log('[DEBUG] Setting up routes with rate limiting');
-    app.use('/register', formLimiter, registerRoutes); // フォーム送信制限
-    app.use('/apply', formLimiter, applyStallRoutes); // フォーム送信制限
-    app.use('/apply', formLimiter, applyPerformerRoutes); // フォーム送信制限
-    app.use('/apply', formLimiter, applyRoutes); // フォーム送信制限
+    // （rateLimit を使っている側）
+app.use('/register', registerRoutes);
+app.use('/apply', applyPerformerRoutes); // ← 出演を先に
+app.use('/apply', applyStallRoutes);     // ← 出店を次に
+app.use('/apply', applyBaseRoutes);      // ← ベースを最後に
   } else {
-    app.use('/register', registerRoutes);
-    app.use('/apply', applyStallRoutes);
-    app.use('/apply', applyPerformerRoutes);
-    app.use('/apply', applyRoutes);
+   // （else 側も同様に順序統一）
+app.use('/register', registerRoutes);
+app.use('/apply',    applyPerformerRoutes); // 具体①
+app.use('/apply',    applyStallRoutes);     // 具体②
+app.use('/apply',    applyRoutes);          // ベース
   }
   app.use('/status', statusRoutes);
   app.use('/admin', adminRoutes);
