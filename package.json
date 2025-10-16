@@ -22,7 +22,9 @@
     "db:studio:training": "dotenv -e .env.training -- npx prisma studio",
     "setup:render": "node scripts/render-setup.js",
     "cc": "claude",
-    "create-event": "node create-event-prod.js"
+    "create-event": "node create-event-prod.js",
+    "postinstall": "prisma generate",
+    "start:render": "npm run db:migrate:prod && node app.js"
   },
   "engines": {
     "node": "20.x"
@@ -36,7 +38,7 @@
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/claude-code": "^1.0.88",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "csv-writer": "^1.6.0",
@@ -51,6 +53,6 @@
   "devDependencies": {
     "dotenv-cli": "^10.0.0",
     "nodemon": "^3.0.1",
-    "prisma": "^5.0.0"
+    "prisma": "^5.22.0"
   }
 }
