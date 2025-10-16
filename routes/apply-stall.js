@@ -312,7 +312,11 @@ router.post('/:slug/stall/submit', async (req, res) => {
     };
 
     await prisma.stallApplication.create({ data });
-    return res.render('apply_stall_success', { title: '出店申込完了', event });
+    return res.render('apply_stall_success', {
+  title: '出店申込完了',
+  event,
+  formData: req.body
+});
   } catch (e) {
     console.error(e);
     return res.status(500).render('error', { title: 'エラー', message: '送信に失敗しました' });

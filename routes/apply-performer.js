@@ -122,9 +122,10 @@ router.post('/:slug/performer/submit', async (req, res) => {
     await prisma.performerApplication.create({ data });
 
     return res.render('apply_performer_success', {
-      title: '出演申込 送信完了',
-      event
-    });
+  title: '出演申込完了',
+  event,
+  formData: req.body
+});
   } catch (e) {
     console.error('[performer submit error]', e);
     return res.status(500).render('error', {
