@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || '出店申込完了' %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+    .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+    .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+    footer { background-color: #f8f9fa; margin-top: auto; }
+    .print-only { display: none; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block; }
+      .card { border: none; box-shadow: none; }
+    }
+    .section-title { border-left: 4px solid #2d5a27; padding-left: 10px; margin: 24px 0 12px; font-weight: 700; }
+    .label { font-weight: 700; display: inline-block; min-width: 8em; }
+    .kv { margin-bottom: .25rem; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light no-print">
+    <div class="container">
+      <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav1">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav1" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
+          <li class="nav-item"><a class="nav-link" href="/apply">イベント申込</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/admin">管理画面</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card">
+          <div class="card-body">
+
+            <div class="text-center mb-4">
+              <div class="display-1">🎉</div>
+              <h2 class="text-success">出店申込完了</h2>
+              <p class="lead mb-0">イベントへの出店申込を受け付けました。</p>
+            </div>
+
+            <div class="alert alert-warning">
+              <strong>今後の流れ：</strong><br>
+              担当者より確認のご連絡をいたします。しばらくお待ちください。<br>
+              連絡が届かない場合は、迷惑メールフォルダもご確認ください。
+            </div>
+
+            <!-- イベント情報 -->
+            <h5 class="section-title">🗓️ イベント情報</h5>
+            <div class="kv"><span class="label">イベント</span><span><%= event?.title || '—' %></span></div>
+            <div class="kv"><span class="label">開催日</span><span><%= event?.date ? new Date(event.date).toLocaleDateString('ja-JP') : '—' %></span></div>
+            <div class="kv"><span class="label">場所</span><span><%= event?.location || '—' %></span></div>
+
+            <!-- 申込控え（formData がある場合だけ出す） -->
+            <% if (typeof formData !== 'undefined' && formData) { %>
+              <h5 class="section-title">🧾 出店申込控え</h5>
+
+              <h6 class="mt-3">基本情報</h6>
+              <div class="kv"><span class="label">参加団体名</span><span><%= formData.storeName || formData.groupName || '—' %></span></div>
+              <div class="kv"><span class="label">代表者名</span><span><%= formData.representative || '—' %></span></div>
+              <div class="kv"><span class="label">メール</span><span><%= formData.email || '—' %></span></div>
+              <div class="kv"><span class="label">電話</span><span><%= formData.phone || '—' %></span></div>
+              <div class="kv"><span class="label">住所</span><span><%= formData.address || '未入力' %></span></div>
+
+              <h6 class="mt-3">出店内容</h6>
+              <div class="kv"><span class="label">出店内容</span><span><%= formData.items || formData.storeItems || formData.content || '—' %></span></div>
+              <div class="kv"><span class="label">希望出店枠数</span><span><%= formData.slotCount || formData.boothCount || '—' %></span></div>
+              <div class="kv"><span class="label">販売品目</span><span><%= formData.salesItems || '—' %></span></div>
+              <div class="kv"><span class="label">価格帯（最低）</span><span><%= formData.priceMin || '—' %></span></div>
+              <div class="kv"><span class="label">価格帯（最高）</span><span><%= formData.priceMax || '—' %></span></div>
+
+              <h6 class="mt-3">設営・レンタル</h6>
+              <div class="kv"><span class="label">レンタルテーブル</span><span><%= formData.rentalTable || formData.tableCount || '0' %>台</span></div>
+              <div class="kv"><span class="label">レンタル椅子</span><span><%= formData.rentalChair || formData.chairCount || '0' %>脚</span></div>
+
+              <h6 class="mt-3">搬入搬出</h6>
+              <div class="kv"><span class="label">車両台数</span><span><%= formData.vehicleCount || '0' %>台</span></div>
+              <div class="kv"><span class="label">車両ナンバー</span><span><%= formData.vehicleNumbers || '未入力' %></span></div>
+
+              <h6 class="mt-3">連絡事項</h6>
+              <div class="kv"><span class="label">ご要望等</span><span style="white-space: pre-wrap;"><%= formData.questions || '—' %></span></div>
+            <% } %>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center no-print mt-4">
+              <button class="btn btn-outline-secondary" onclick="window.print()">🖨 印刷する</button>
+              <a href="/apply/<%= event?.slug %>" class="btn btn-primary">このイベントの申込ページへ</a>
+              <a href="/" class="btn btn-outline-primary">ホームに戻る</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-3 mt-4 no-print">
+    <div class="container text-center text-muted">
+      <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
