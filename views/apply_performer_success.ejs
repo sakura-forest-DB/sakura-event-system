@@ -1,30 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= title || '出演申込 完了' %></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || '出演申込完了' %></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
-    .navbar-brand { font-weight: 700; color: #2d5a27 !important; }
-    .btn-main { background:#2d5a27; border-color:#2d5a27; color:#fff; }
-    .btn-main:hover { background:#1e3c1a; border-color:#1e3c1a; color:#fff; }
-    .hero {
-      background: #f3e7f7; /* 淡い紫（出演のトーン） */
-      border: 1px solid #e2d3ec;
-      border-radius: .5rem;
-      padding: 1.25rem;
+    .navbar-brand { font-weight: bold; color: #2d5a27 !important; }
+    .btn-primary { background-color: #2d5a27; border-color: #2d5a27; }
+    .btn-primary:hover { background-color: #1e3c1a; border-color: #1e3c1a; }
+    footer { background-color: #f8f9fa; margin-top: auto; }
+    .print-only { display: none; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block; }
+      .card { border: none; box-shadow: none; }
     }
+    .section-title { border-left: 4px solid #6f42c1; padding-left: 10px; margin: 24px 0 12px; font-weight: 700; }
+    .label { font-weight: 700; display: inline-block; min-width: 8em; }
+    .kv { margin-bottom: .25rem; }
   </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <nav class="navbar navbar-expand-lg bg-light border-bottom">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light no-print">
     <div class="container">
-      <a class="navbar-brand" href="/">菊名桜山公園</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav1">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div id="mainNav" class="collapse navbar-collapse">
+      <div id="nav1" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
           <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
@@ -39,39 +45,70 @@
 
   <main class="container my-4 flex-grow-1">
     <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="hero mb-4">
-          <h2 class="mb-2">🎉 送信が完了しました</h2>
-          <% if (event) { %>
-            <p class="mb-1"><strong><%= event.title %></strong> への出演申込を受け付けました。</p>
-            <p class="text-muted mb-0">
-              開催日：<%= new Date(event.date).toLocaleDateString('ja-JP') %>
-            </p>
-          <% } %>
-        </div>
-
-        <div class="card shadow-sm">
+      <div class="col-lg-10">
+        <div class="card">
           <div class="card-body">
-            <p class="mb-3">
-              ご入力のメールアドレス宛に控えをお送りしている場合があります。届かない場合は迷惑メールをご確認ください。
-            </p>
-            <div class="d-grid gap-2 d-sm-flex">
-              <% if (event) { %>
-                <a href="/apply/<%= event.slug %>/performer" class="btn btn-outline-secondary">▶ フォームに戻る</a>
-              <% } %>
-              <a href="/" class="btn btn-main">🏠 ホームへ</a>
+
+            <div class="text-center mb-4">
+              <div class="display-1">🎉</div>
+              <h2 class="text-success">出演申込完了</h2>
+              <p class="lead mb-0">イベントへの出演申込を受け付けました。</p>
             </div>
+
+            <div class="alert alert-warning">
+              <strong>今後の流れ：</strong><br>
+              担当者より確認のご連絡をいたします。しばらくお待ちください。<br>
+              連絡が届かない場合は、迷惑メールフォルダもご確認ください。
+            </div>
+
+            <!-- イベント情報 -->
+            <h5 class="section-title">🗓️ イベント情報</h5>
+            <div class="kv"><span class="label">イベント</span><span><%= event?.title || '—' %></span></div>
+            <div class="kv"><span class="label">開催日</span><span><%= event?.date ? new Date(event.date).toLocaleDateString('ja-JP') : '—' %></span></div>
+            <div class="kv"><span class="label">場所</span><span><%= event?.location || '—' %></span></div>
+
+            <!-- 申込控え（formData がある場合だけ出す） -->
+            <% if (typeof formData !== 'undefined' && formData) { %>
+              <h5 class="section-title">🧾 出演申込控え</h5>
+
+              <h6 class="mt-3">基本情報</h6>
+              <div class="kv"><span class="label">参加団体名</span><span><%= formData.groupName || '—' %></span></div>
+              <div class="kv"><span class="label">代表者名</span><span><%= formData.representative || '—' %></span></div>
+              <div class="kv"><span class="label">メール</span><span><%= formData.email || '—' %></span></div>
+              <div class="kv"><span class="label">電話</span><span><%= formData.phone || '—' %></span></div>
+              <div class="kv"><span class="label">住所</span><span><%= formData.address || '未入力' %></span></div>
+
+              <h6 class="mt-3">出演内容</h6>
+              <div class="kv"><span class="label">出演内容</span><span style="white-space: pre-wrap;"><%= formData.performance || '—' %></span></div>
+              <div class="kv"><span class="label">出演者数</span><span><%= formData.performerCount || '—' %>人</span></div>
+              <div class="kv"><span class="label">希望枠数</span><span><%= formData.slotCount || '—' %>枠</span></div>
+
+              <h6 class="mt-3">音響・機材レンタル</h6>
+              <div class="kv"><span class="label">音源再生のみ</span><span><%= formData.audioSourceOnly || '0' %>枠</span></div>
+              <div class="kv"><span class="label">拡声装置＋マイク1本</span><span><%= formData.rentalAmp || '0' %>枠</span></div>
+              <div class="kv"><span class="label">追加マイク本数</span><span><%= formData.rentalMic || '0' %>本</span></div>
+
+              <h6 class="mt-3">搬入搬出</h6>
+              <div class="kv"><span class="label">車両台数</span><span><%= formData.vehicleCount || '0' %>台</span></div>
+              <div class="kv"><span class="label">車両ナンバー</span><span><%= formData.vehicleNumbers || '未入力' %></span></div>
+
+              <h6 class="mt-3">連絡事項</h6>
+              <div class="kv"><span class="label">ご要望等</span><span style="white-space: pre-wrap;"><%= formData.questions || '—' %></span></div>
+            <% } %>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center no-print mt-4">
+              <button class="btn btn-outline-secondary" onclick="window.print()">🖨 印刷する</button>
+              <a href="/apply/<%= event?.slug %>" class="btn btn-primary">このイベントの申込ページへ</a>
+              <a href="/" class="btn btn-outline-primary">ホームに戻る</a>
+            </div>
+
           </div>
         </div>
-
-        <p class="text-muted mt-3 small">
-          ※誤送信などございましたら、管理側で取り消し/修正可能です。必要に応じてご連絡ください。
-        </p>
       </div>
     </div>
   </main>
 
-  <footer class="py-3 mt-4">
+  <footer class="py-3 mt-4 no-print">
     <div class="container text-center text-muted">
       <p>&copy; 2025 菊名桜山公園 ボランティア管理システム</p>
     </div>
