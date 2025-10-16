@@ -89,67 +89,41 @@ router.post('/:slug/performer/preview', async (req, res) => {
   }
 });
 
-// 送信（DB保存）
+// 送信（まずは最小フィールドだけで通す／デバッグ用）
 router.post('/:slug/performer/submit', async (req, res) => {
   try {
     const { slug } = req.params;
     const prisma = req.prisma;
 
+    // イベント取得 & 受付可否チェック
     const event = await prisma.event.findUnique({ where: { slug } });
     if (!event || !event.isPublic || event.status !== 'OPEN') {
       return res.status(404).render('apply-closed', { title: '申込受付終了', event });
     }
 
-    const toInt = v => (v === '' || v == null ? null : parseInt(v, 10));
+    // まずは最小セットで保存（通ることを確認）
+    const data = {
+      eventId: event.id,
+      groupName: req.body.groupName,
+      representative: req.body.representative,
+      email: req.body.email,
+      phone: req.body.phone,
+      performance: req.body.performance,
+    };
 
-    await prisma.performerApplication.create({
-      data: {
-        eventId: event.id,
-        groupName: req.body.groupName,
-        representative: req.body.representative,
-        address: req.body.address || null,
-        email: req.body.email,
-        phone: req.body.phone,
-        performance: req.body.performance,
-        performerCount: toInt(req.body.performerCount),
-        slotCount: toInt(req.body.slotCount),
-        vehicleCount: toInt(req.body.vehicleCount),
-        vehicleNumbers: req.body.vehicleNumbers || null,
-        audioSourceOnly: toInt(req.body.audioSourceOnly),
-        rentalAmp: toInt(req.body.rentalAmp),
-        rentalMic: toInt(req.body.rentalMic),
-        questions: req.body.questions || null,
-        privacyConsent: !!req.body.privacyConsent,
-        marketingConsent: !!req.body.marketingConsent,
-        originalPayload: JSON.stringify(req.body),
-        originalSubmittedAt: new Date()
-      }
-    });
+    await prisma.performerApplication.create({ data });
 
-    return res.render('apply_performer_success', { title: '出演申込完了', event });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).render('error', { title: 'エラー', message: '送信に失敗しました' });
-  }
-});
-
-// 戻って修正（入力画面に差し戻し）
-router.post('/:slug/performer/edit', async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const prisma = req.prisma;
-    const event = await prisma.event.findUnique({ where: { slug } });
-    if (!event) {
-      return res.status(404).render('error', { title: 'エラー', message: 'イベントが見つかりません' });
-    }
-    return res.render('apply_performer', {
-      title: `${event.title} - 出演申込（修正）`,
-      event,
-      formData: req.body
+    return res.render('apply_performer_success', {
+      title: '出演申込 送信完了',
+      event
     });
   } catch (e) {
-    console.error(e);
-    return res.status(500).render('error', { title: 'エラー', message: '修正画面の表示に失敗しました' });
+    console.error('[performer submit error]', e);
+    // 一時的にエラーメッセージを画面にも表示
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: e.message || '送信に失敗しました'
+    });
   }
 });
 
