@@ -28,13 +28,13 @@
   // --- end optional rate-limit ---
 
   // Import routes
-import homeRoutes from './routes/home.js';
-import registerRoutes from './routes/register.js';
-import applyBaseRoutes from './routes/apply.js';
-import applyStallRoutes from './routes/apply-stall.js';
-import applyPerformerRoutes from './routes/apply-performer.js';
-import statusRoutes from './routes/status.js';
-import adminRoutes from './routes/admin.js';
+import homeRoutes from './src/routes/home.js';
+import registerRoutes from './src/routes/register.js';
+import applyBaseRoutes from './src/routes/apply.js';
+import applyStallRoutes from './src/routes/apply-stall.js';
+import applyPerformerRoutes from './src/routes/apply-performer.js';
+import statusRoutes from './src/routes/status.js';
+import adminRoutes from './src/routes/admin.js';
 
   dotenv.config();
 
