@@ -183,7 +183,7 @@
   </form>
 
   <!-- 戻って修正 -->
-  <form method="POST" action="/apply/<%= event.slug %>/performer/edit" class="d-inline">
+  <form method="POST" action="/apply/<%= event.slug %>/performer" class="d-inline">
     <% for (const [key, value] of Object.entries(formData)) { %>
       <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
     <% } %>
