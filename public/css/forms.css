@@ -1,0 +1,795 @@
+/* public/css/forms.css */
+
+/* フォームのセクションデザイン */
+.form-section {
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
+  background: #fff;
+}
+
+/* セクション見出し */
+.form-section__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  background: #f6f6fb;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-bottom: 1px solid #e9e6ff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section__title .emoji {
+  font-size: 1.1rem;
+}
+
+/* 注釈や補足 */
+.help-muted {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* コールアウトボックス */
+.callout {
+  border-left: 4px solid #0d6efd;
+  background: #f1f6ff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+
+.callout.warn {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.callout.tip {
+  border-left-color: #20c997;
+  background: #f3fff9;
+}
+
+/* 固定アクションボックス */
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  padding: 12px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 16px;
+}
+
+/* 出演ページ向けのテーマ */
+.theme-performer .form-section__title {
+  background: #eef5ee;
+  border-bottom-color: #d8e6d8;
+}
+
+.theme-performer .callout {
+  border-left-color: #2d5a27;
+  background: #f3f8f3;
+}
+
+.theme-performer .callout.warn {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.theme-performer .callout.tip {
+  border-left-color: #20c997;
+  background: #f3fff9;
+}
+/* === THEME COLORS ==================================================== */
+/* 出店（ピンク系） */
+.theme-stall .form-section__title{ background:#fdebf2; border-bottom-color:#f6cfe0; }
+.theme-stall .callout{ border-left-color:#e83e8c; background:#fff1f7; }
+.theme-stall .callout.warn{ border-left-color:#dc3545; background:#fff5f5; }
+.theme-stall .btn-accent{ background:#e83e8c; border-color:#e83e8c; color:#fff; }
+.theme-stall .btn-accent:hover{ filter:brightness(.95); color:#fff; }
+
+/* 出演（紫系） */
+.theme-performer .form-section__title{ background:#efe7fb; border-bottom-color:#d9cffa; }
+.theme-performer .callout{ border-left-color:#6f42c1; background:#f4effe; }
+.theme-performer .callout.warn{ border-left-color:#dc3545; background:#fff5f5; }
+.theme-performer .btn-accent{ background:#6f42c1; border-color:#6f42c1; color:#fff; }
+.theme-performer .btn-accent:hover{ filter:brightness(.95); color:#fff; }
+
+/* === FIELD HINTS / INPUT VISIBILITY ================================= */
+.form-control, .form-select, textarea.form-control{
+  background:#fff; /* 入力欄は白で統一 */
+}
+.field-hint{ font-size:.85rem; color:#6c757d; margin-top:.25rem; }
+.label-required::after{ content:" *"; color:#dc3545; }
+
+/* 余白・読みやすさの微調整 */
+.form-section .form-label{ font-weight:600; }
+.form-section .row.g-3{ row-gap:1rem; }
+
+/* ==== Performer：セクションは淡い紫 / 入力欄は白 ================== */
+
+/* セクション全体（見出し＋内容）を淡い紫の“帯”に */
+.theme-performer .form-section{
+  background:#f4effe;                  /* ほんのり薄い紫 */
+  border:1px solid #d9cffa;
+  border-radius:12px;
+  padding:16px 16px 10px;
+  margin-bottom:24px;
+}
+
+/* ==== Stall：セクションは淡いピンク / 入力欄は白 ==================== */
+.theme-stall .form-section{
+  background:#fff1f7;              /* 白寄りの淡いピンク */
+  border:1px solid #f8c6da;        /* 薄いピンクの枠 */
+  border-radius:12px;
+  padding:16px 16px 10px;
+  margin-bottom:24px;
+}
+
+/* セクション見出し（大きめ・はっきり） */
+.theme-performer .form-section h5{
+  font-size:1.25rem;
+  font-weight:700;
+  color:#4b2ea2;                       /* 濃いめの紫 */
+  margin:0 0 .75rem;
+}
+
+/* 入力欄は白＆少し大きめに（タップ/クリックしやすく） */
+.theme-performer .form-section .form-control,
+.theme-performer .form-section .form-select{
+  background:#fff;
+  font-size:1.05rem;
+  padding:.65rem .75rem;
+}
+
+/* ラベルは少し強めに */
+.theme-performer .form-section .form-label{
+  font-weight:600;
+}
+
+/* 補足説明は小さく薄め（主従をはっきり） */
+.theme-performer .form-section .form-text{
+  font-size:.85rem;
+  color:#6c757d;
+  margin-top:.25rem;
+}
+
+/* ボタンはアクセント色（すでに定義がある場合はそのままでOK） */
+.theme-performer .btn-accent{
+  background:#6f42c1; border-color:#6f42c1; color:#fff;
+}
+.theme-performer .btn-accent:hover{ filter:brightness(.95); color:#fff; }
+
+/* ==== Font unification ================================================== */
+/* 日本語も含めて全体をゴシック体に統一（Safari対策） */
+body, input, textarea, select, button {
+  font-family: 
+    "Noto Sans JP", "Hiragino Kaku Gothic ProN", 
+    "Hiragino Sans", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ==== Top link buttons (上部ボタン) ==================================== */
+
+/* 全体配置 */
+.top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+/* 共通ボタンスタイル */
+.top-links a.btn {
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+/* トップへボタン（淡グレー） */
+.top-links .btn-view-all {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.top-links .btn-view-all:hover {
+  background-color: #e9ecef;
+  color: #000;
+}
+
+/* 出演ページ専用ボタン（紫） */
+.theme-performer .top-links .btn-performer {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+  color: white;
+}
+.theme-performer .top-links .btn-performer:hover {
+  background-color: #5b33a8;
+  border-color: #5b33a8;
+}
+
+/* 出店ページ専用ボタン（ピンク） */
+.theme-stall .top-links .btn-stall {
+  background-color: #e83e8c;
+  border-color: #e83e8c;
+  color: white;
+}
+.theme-stall .top-links .btn-stall:hover {
+  background-color: #d63384;
+  border-color: #d63384;
+}
+
+/* === 見出し(h5)を帯デザインにする（互換対応） ================== */
+.form-section > h5{
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 14px;
+  background: #f6f6fb;            /* デフォルト: うすいグレー寄り */
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-bottom: 1px solid #e9e6ff;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* テーマ別の色（stall=ピンク / performer=紫） */
+.theme-stall .form-section > h5{
+  background:#fdebf2;
+  border-bottom-color:#f6cfe0;
+}
+.theme-performer .form-section > h5{
+  background:#efe7fb;
+  border-bottom-color:#d9cffa;
+}
+
+/* ==== THEME：見出し帯・ボタン（色味はこのまま維持） ================= */
+/* 見出し帯：出店＝ピンク / 出演＝紫（少し濃い帯で可読性UP） */
+.theme-stall    .form-section > h5{ background:#f9d5e3; border-bottom-color:#f3b8cd; color:#5a0033; }
+.theme-performer.form-section > h5{}
+.theme-performer .form-section > h5{ background:#e3d8fa; border-bottom-color:#c7b5f5; color:#4b2ea2; }
+
+/* 申込むボタン（サイズ・影は共通／色はテーマで切替） */
+.btn-accent{
+  font-size:1.1rem; font-weight:700; padding:.75rem 1.75rem;
+  border-radius:12px; box-shadow:0 3px 6px rgba(0,0,0,.15); transition:.2s; }
+.btn-accent:hover{ transform:translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,.25); }
+.theme-stall     .btn-accent{ background:#e83e8c; border-color:#e83e8c; color:#fff; }
+.theme-stall     .btn-accent:hover{ background:#d63384; border-color:#d63384; }
+.theme-performer .btn-accent{ background:#6f42c1; border-color:#6f42c1; color:#fff; }
+.theme-performer .btn-accent:hover{ background:#5b33a8; border-color:#5b33a8; }
+
+/* 戻るボタン（共通） */
+.btn-secondary{ background:#bbb; border-color:#aaa; color:#fff; font-weight:600; border-radius:10px; padding:.6rem 1.2rem; }
+.btn-secondary:hover{ background:#999; border-color:#888; }
+
+/* ==== 入力UI：高さ/余白/影を共通でコンパクトに ======================== */
+/* ラベルは上に乗せ、下の余白は控えめに。項目ブロック間はゆったり。 */
+.form-section label.form-label{ display:block; margin-bottom:.25rem; line-height:1.2; }
+.form-section .mb-3{ margin-bottom:1.25rem; }
+
+/* すべての入力・セレクト・テキストエリアのベース */
+.form-control, .form-select, textarea.form-control{
+  background:#fff; border:1px solid #ccc; border-radius:10px;
+  padding:.45rem .75rem; box-shadow:0 1px 3px rgba(0,0,0,.12);
+  transition: box-shadow .2s, border-color .2s;
+}
+
+/* テーマ色のフォーカス枠（ピンク／紫） */
+.theme-stall     .form-control:focus, .theme-stall     .form-select:focus, .theme-stall     textarea.form-control:focus{
+  border-color:#e83e8c; box-shadow:0 0 6px rgba(232,62,140,.3);
+}
+.theme-performer .form-control:focus, .theme-performer .form-select:focus, .theme-performer textarea.form-control:focus{
+  border-color:#6f42c1; box-shadow:0 0 6px rgba(111,66,193,.3);
+}
+
+/* 高さを統一（Bootstrapより強い指定） */
+.theme-stall .form-section    input.form-control,
+.theme-stall .form-section    select.form-select,
+.theme-performer .form-section input.form-control,
+.theme-performer .form-section select.form-select{
+  height:2.4rem !important; padding:.45rem .75rem !important; border-radius:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+
+/* 数値入力：4桁想定で少し狭め、影は上品なグレー */
+.theme-stall  input[type="number"], .theme-performer input[type="number"]{
+  max-width:140px; text-align:right; padding:.45rem .5rem; border:1px solid #ccc; border-radius:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+.theme-stall  input[type="number"]:focus{ border-color:#e83e8c; box-shadow:0 0 5px rgba(232,62,140,.3); }
+.theme-performer input[type="number"]:focus{ border-color:#6f42c1; box-shadow:0 0 5px rgba(111,66,193,.3); }
+@media (max-width:600px){ .theme-stall input[type="number"], .theme-performer input[type="number"]{ max-width:100%; text-align:left; } }
+
+/* ご質問・ご要望欄：左寄せで幅60%（はみ出し防止）。スマホは全幅。 */
+.theme-stall  textarea#questions, .theme-performer textarea#questions{
+  width:60%; min-height:150px; margin-left:0; display:block;
+  border:1px solid #ccc; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.12); padding:.6rem .75rem;
+}
+@media (max-width:600px){ .theme-stall textarea#questions, .theme-performer textarea#questions{ width:100%; } }
+
+/* email/住所の幅（PCで見やすく、SPは100%） */
+.theme-stall  #email, .theme-performer #email{ width:100%; max-width:560px; }
+.theme-stall  textarea#address.form-control,
+.theme-performer textarea#address.form-control{
+  width:60%; max-width:600px; height:1.8em !important; min-height:1.8em !important;
+  line-height:1.2; padding:.35rem .75rem; border-radius:10px; margin-left:0;
+}
+@media (max-width:768px){
+  .theme-stall  #email, .theme-performer #email,
+  .theme-stall  textarea#address.form-control, .theme-performer textarea#address.form-control{ width:100%; max-width:none; }
+}
+
+/* 必須マーク（*）を赤で明示（ラベルに .label-required を付与想定） */
+.label-required::after{ content:" *"; color:#dc3545; }
+
+/* セクション外枠も少し丸く */
+.theme-stall .form-section, .theme-performer .form-section{ border-radius:16px; }
+/* === CSS LOADED MARKER v1 === */
+
+/* === UI FIX v2: label spacing & compact inputs (final override) === */
+
+/* ラベルは欄のすぐ上に寄せる（下余白を小さく） */
+.form-section label.form-label{
+  display:block;
+  margin-bottom: .2rem !important;   /* ← 距離を詰める */
+  line-height: 1.2;
+}
+
+/* 各項目ブロック同士の間は少し広めにして見やすく */
+.form-section .mb-3{
+  margin-bottom: 1.1rem !important;  /* ← 次のラベルとの距離 */
+}
+
+/* 入力欄（input/select）をスリムに。角丸＆内側余白も控えめに */
+.theme-stall .form-section input.form-control,
+.theme-stall .form-section select.form-select,
+.theme-performer .form-section input.form-control,
+.theme-performer .form-section select.form-select{
+  height: 2.2rem !important;         /* ← 住所と同じくらいに */
+  padding: .35rem .6rem !important;  /* ← 高さを抑える */
+  border-radius: 10px !important;
+}
+
+/* 住所は 1 行のまま（テキストエリアでも薄く） */
+.theme-stall textarea#address.form-control,
+.theme-performer textarea#address.form-control{
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  line-height: 1.2 !important;
+  padding: .35rem .6rem !important;
+  border-radius: 10px !important;
+}
+
+/* メール欄は横幅ゆったり（SPは自動で100%に） */
+.theme-stall #email,
+.theme-performer #email{
+  width: 100%;
+  max-width: 560px;
+}
+@media (max-width: 768px){
+  .theme-stall #email,
+  .theme-performer #email{ max-width: none; }
+}
+
+/* 影はやさしいグレーで統一 */
+.form-control,
+.form-select,
+textarea.form-control{
+  box-shadow: 0 1px 3px rgba(0,0,0,.12) !important;
+  border: 1px solid #ccc !important;
+}
+/* === /UI FIX v2 === */
+/* === FIX: 基本情報の余白と高さを統一（最優先オーバーライド） === */
+
+/* ラベルは欄のすぐ上に寄せる */
+.form-section label.form-label{
+  display:block;
+  margin-bottom:.2rem !important;
+  line-height:1.2;
+}
+
+/* 入力欄（input/select）はスリムに揃える */
+.theme-stall .form-section input.form-control,
+.theme-stall .form-section select.form-select,
+.theme-performer .form-section input.form-control,
+.theme-performer .form-section select.form-select{
+  height:2.2rem !important;           /* ← 高さを固定 */
+  min-height:2.2rem !important;
+  padding:.35rem .6rem !important;     /* ← 内側余白を控えめに */
+  border-radius:10px !important;
+}
+
+/* 住所（textarea）は1行相当でそろえる */
+.theme-stall textarea#address.form-control,
+.theme-performer textarea#address.form-control{
+  height:1.9rem !important;
+  min-height:1.9rem !important;
+  line-height:1.2 !important;
+  padding:.35rem .6rem !important;
+  border-radius:10px !important;
+}
+
+/* ★ ここがポイント：次のラベルまでの“段落”余白を詰める */
+/* 2列ブロック含め、mb-3 が付いている要素を一律で強めに上書き */
+.theme-stall .form-section .mb-3,
+.theme-performer .form-section .mb-3,
+.theme-stall .form-section .row.mb-3,
+.theme-performer .form-section .row.mb-3,
+.theme-stall .form-section .col-md-6.mb-3,
+.theme-performer .form-section .col-md-6.mb-3{
+  margin-bottom:.75rem !important;     /* ← ここを詰める */
+}
+
+/* g-3 が作る列間余白（row-gap）も少し詰める */
+.theme-stall .form-section .row.g-3,
+.theme-performer .form-section .row.g-3{
+  row-gap:.75rem !important;
+}
+
+/* 影と枠線はやさしいグレーで統一（見た目は据え置き） */
+.form-section .form-control,
+.form-section .form-select,
+.form-section textarea.form-control{
+  border:1px solid #ccc !important;
+  box-shadow:0 1px 3px rgba(0,0,0,.12) !important;
+}
+
+
+/* === FIX v2: ラベル間隔とカーソル“上寄せ”の見え方を統一（最優先） === */
+
+/* ラベル：前の入力欄と適度に離し、自分の欄とは詰める */
+.form-section label.form-label{
+  display:block;
+  margin-top:.60rem !important;     /* ← 前項目との距離（重要） */
+  margin-bottom:.20rem !important;  /* ← 自分の入力欄との距離 */
+  line-height:1.2 !important;
+}
+/* セクション先頭の最初のラベルは上余白を無しに */
+.form-section .form-section > label.form-label:first-child,
+.form-section > label.form-label:first-child{
+  margin-top:0 !important;
+}
+
+/* 一行入力（input/select）：“上寄せ”っぽく見せるパディング配分 */
+.theme-stall .form-section input.form-control,
+.theme-performer .form-section input.form-control,
+.theme-stall .form-section select.form-select,
+.theme-performer .form-section select.form-select{
+  height:2.2rem !important;
+  min-height:2.2rem !important;
+  padding:.25rem .65rem .50rem .65rem !important;  /* 上薄く/下やや厚く */
+  line-height:1.2 !important;
+  border-radius:10px !important;
+}
+
+/* 住所など一行想定の textarea も同じ見え方に */
+.theme-stall textarea#address.form-control,
+.theme-performer textarea#address.form-control{
+  height:2.1rem !important;
+  min-height:2.1rem !important;
+  padding:.30rem .65rem .45rem .65rem !important;  /* 上薄く/下やや厚く */
+  line-height:1.2 !important;
+  border-radius:10px !important;
+}
+
+/* “各項目ブロック（mb-3）”の段落余白を統一（詰まり過ぎ回避） */
+.theme-stall .form-section .mb-3,
+.theme-performer .form-section .mb-3,
+.theme-stall .form-section .row.mb-3,
+.theme-performer .form-section .row.mb-3,
+.theme-stall .form-section .col-md-6.mb-3,
+.theme-performer .form-section .col-md-6.mb-3{
+  margin-bottom:.95rem !important; /* ← 前より少し広げて読み間違い防止 */
+}
+
+/* row.g-3 の縦ギャップも揃える（2カラム行の縦間隔） */
+.theme-stall .form-section .row.g-3,
+.theme-performer .form-section .row.g-3{
+  row-gap:.85rem !important;
+}
+
+/* 入力欄の見た目はやさしいグレー影に統一（既存と同じテイスト） */
+.form-section .form-control,
+.form-section .form-select,
+.form-section textarea.form-control{
+  border:1px solid #ccc !important;
+  box-shadow:0 1px 3px rgba(0,0,0,.12) !important;
+  background:#fff !important;
+}
+/* === /FIX === */
+
+/* === TOP LINK BUTTONS (共通デザイン) =============================== */
+.top-links{
+  display:flex; flex-wrap:wrap; gap:.75rem;
+  justify-content:center; margin: 1rem 0 1.25rem;
+}
+.top-links a.btn{
+  font-weight:600; font-size:1.05rem;
+  padding:.6rem 1.1rem; border-radius:.6rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  transition: all .15s ease; text-decoration:none;
+}
+
+/* 先頭の “トップへ” は控えめグレー */
+.top-links .btn-view-all{
+  background:#f5f5f5; border:1px solid #d9d9d9; color:#333;
+}
+.top-links .btn-view-all:hover{
+  background:#ececec; color:#000;
+}
+
+/* 出演（紫） */
+.theme-performer .top-links .btn-performer{
+  background:#6f42c1; border-color:#6f42c1; color:#fff;
+}
+.theme-performer .top-links .btn-performer:hover{
+  filter:brightness(.95); color:#fff;
+}
+
+/* 出店（ピンク） */
+.theme-stall .top-links .btn-stall{
+  background:#e83e8c; border-color:#e83e8c; color:#fff;
+}
+.theme-stall .top-links .btn-stall:hover{
+  filter:brightness(.95); color:#fff;
+}
+
+/* ガイド等のアウトライン（必要なとき用） */
+.top-links .btn-outline{
+  background:#fff; color:#333; border:1px solid #bbb;
+}
+.top-links .btn-outline:hover{
+  background:#f8f9fa;
+}
+
+/* スマホ調整：左右に少し広め、行間も余裕 */
+@media (max-width: 600px){
+  .top-links{ gap:.6rem; }
+  .top-links a.btn{ width:auto; padding:.65rem 1rem; }
+}
+/* === TOP LINK BUTTONS (final override) =============================== */
+/* 置き場所: public/css/forms.css の最後 */
+
+.top-links{ 
+  display:flex !important; 
+  flex-wrap:wrap; 
+  gap:.75rem; 
+  justify-content:center; 
+  margin-bottom:1.25rem;
+}
+
+.top-links a.btn{
+  font-weight:600;
+  font-size:1.05rem;
+  padding:.6rem 1.2rem;
+  border-radius:.6rem;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+  transition:all .2s ease;
+  text-decoration:none !important;
+}
+
+/* トップへ（共通の淡グレー） */
+.top-links .btn-view-all{
+  background:#f5f5f5 !important;
+  color:#333 !important;
+  border:1px solid #ccc !important;
+}
+.top-links .btn-view-all:hover{
+  background:#e9ecef !important;
+  color:#000 !important;
+}
+
+/* 出演（紫） */
+.theme-performer .top-links .btn-performer{
+  background:#6f42c1 !important;
+  border-color:#6f42c1 !important;
+  color:#fff !important;
+}
+.theme-performer .top-links .btn-performer:hover{
+  background:#5b33a8 !important;
+  border-color:#5b33a8 !important;
+}
+
+/* 出店（ピンク） */
+.theme-stall .top-links .btn-stall{
+  background:#e83e8c !important;
+  border-color:#e83e8c !important;
+  color:#fff !important;
+}
+.theme-stall .top-links .btn-stall:hover{
+  background:#d63384 !important;
+  border-color:#d63384 !important;
+}
+
+/* === TOP-LINK BUTTONS (FINAL) ===================================== */
+/* コンテナに依存しない汎用レイアウト */
+.top-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem;
+  justify-content:center;
+  margin: 1rem 0 1.25rem;
+}
+
+/* 各ボタンの共通ベース（Bootstrapの .btn を上書き） */
+.top-links a.btn{
+  font-weight:600;
+  font-size:1.05rem;
+  padding:.6rem 1.2rem;
+  border-radius:.6rem;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+  text-decoration:none;
+  transition: all .15s ease-in-out;
+}
+
+/* 「トップへ」：薄グレー基調（共通） */
+.top-links .btn-view-all{
+  background:#f5f5f5;
+  color:#333;
+  border:1px solid #ccc;
+}
+.top-links .btn-view-all:hover{
+  background:#e9ecef;
+  color:#000;
+}
+
+/* 出演ページ：紫 */
+.theme-performer .top-links .btn-performer{
+  background:#6f42c1;
+  border-color:#6f42c1;
+  color:#fff;
+}
+.theme-performer .top-links .btn-performer:hover{
+  background:#5b33a8;
+  border-color:#5b33a8;
+}
+
+/* 出店ページ：ピンク */
+.theme-stall .top-links .btn-stall{
+  background:#e83e8c;
+  border-color:#e83e8c;
+  color:#fff;
+}
+.theme-stall .top-links .btn-stall:hover{
+  background:#d63384;
+  border-color:#d63384;
+}
+/* === /TOP-LINK BUTTONS (FINAL) =================================== */
+/* ✅ CSS refreshed 2025-10-19 */
+
+/* === TOP-LINK BUTTONS (force apply, no theme wrapper dependency) === */
+.top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+/* 共通ボタン外観（角丸＋軽い影） */
+.top-links a.btn {
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+/* トップへ（淡グレー） */
+.top-links .btn-view-all {
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+}
+.top-links .btn-view-all:hover {
+  background-color: #e9ecef !important;
+  color: #000 !important;
+}
+
+/* 出演（紫） */
+.top-links .btn-performer {
+  background-color: #6f42c1 !important;
+  border-color: #6f42c1 !important;
+  color: #fff !important;
+}
+.top-links .btn-performer:hover {
+  background-color: #5b33a8 !important;
+  border-color: #5b33a8 !important;
+}
+
+/* 出店（ピンク） */
+.top-links .btn-stall {
+  background-color: #e83e8c !important;
+  border-color: #e83e8c !important;
+  color: #fff !important;
+}
+.top-links .btn-stall:hover {
+  background-color: #d63384 !important;
+  border-color: #d63384 !important;
+}
+
+/* ✅ CSS refreshed (buttons) */
+
+/* === TOP LINK BUTTONS — FORCE APPLY (FINAL) ======================= */
+/* 通常状態（:hover ではない）を強制適用 */
+.top-links a.btn.btn-view-all{
+  background-color:#f5f5f5 !important;
+  border:1px solid #ccc !important;
+  color:#333 !important;
+  border-radius:.6rem !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.08) !important;
+  padding:.6rem 1.2rem !important;
+  font-weight:600 !important;
+  text-decoration:none !important;
+}
+
+/* ホバー */
+.top-links a.btn.btn-view-all:hover{
+  background-color:#e9ecef !important;
+  color:#000 !important;
+}
+
+/* 出店（ピンク） */
+.theme-stall .top-links a.btn.btn-stall{
+  background-color:#e83e8c !important;
+  border:1px solid #e83e8c !important;
+  color:#fff !important;
+  border-radius:.6rem !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.08) !important;
+  padding:.6rem 1.2rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+}
+.theme-stall .top-links a.btn.btn-stall:hover{
+  background-color:#d63384 !important;
+  border-color:#d63384 !important;
+}
+
+/* 出演（紫） */
+.theme-performer .top-links a.btn.btn-performer{
+  background-color:#6f42c1 !important;
+  border:1px solid #6f42c1 !important;
+  color:#fff !important;
+  border-radius:.6rem !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.08) !important;
+  padding:.6rem 1.2rem !important;
+  font-weight:700 !important;
+  text-decoration:none !important;
+}
+.theme-performer .top-links a.btn.btn-performer:hover{
+  background-color:#5b33a8 !important;
+  border-color:#5b33a8 !important;
+}
+/* === /TOP LINK BUTTONS — FORCE APPLY ============================== */
+
+/* === VOLUNTEER BUTTON REVERSE STYLE =============================== */
+.btn-volunteer {
+  background-color: #dfeadf !important;   /* やさしい緑系背景 */
+  border: 1px solid #a9cba9 !important;
+  color: #222 !important;                 /* 黒文字で可読性UP */
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 0.6rem 1.4rem;
+  text-decoration: none;
+}
+
+.btn-volunteer:hover {
+  background-color: #cfe0cf !important;   /* 少し濃い緑でホバー */
+  border-color: #9bbd9b !important;
+  color: #000 !important;
+}
+/* === /VOLUNTEER BUTTON REVERSE ==================================== */
+/* === CSS LOADED MARKER v1 === */

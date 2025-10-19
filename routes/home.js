@@ -7,17 +7,25 @@ router.get('/', async (req, res) => {
     try {
       const now = new Date();
 
-      const events = await prisma.event.findMany({
-        where: {
-          AND: [
-            { isPublic: true },
-            { status: 'OPEN' },
-            { date: { gte: now } }
-          ]
-        },
-        orderBy: { date: 'asc' }
-      });
 
+// ① いま運用中：このイベントだけ表示
+const events = await prisma.event.findMany({
+  where: { slug: 'forest-christmas' },
+  orderBy: { date: 'asc' }
+});
+
+/* ② バックアップ（通常条件・将来戻す用）
+const events = await prisma.event.findMany({
+  where: {
+    AND: [
+      { isPublic: true },
+      { status: 'OPEN' },
+      { date: { gte: now } }
+    ]
+  },
+  orderBy: { date: 'asc' }
+});
+*/
       // 申込ボタン表示制御の補助プロパティ
       const upcomingEvents = events.map(e => ({
         ...e,

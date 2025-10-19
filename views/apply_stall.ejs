@@ -1,107 +1,44 @@
 <!DOCTYPE html>
   <html lang="ja">
   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width,
-  initial-scale=1.0">
-      <title><%= title %></title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.
-  1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-      <style>
-          .navbar-brand { font-weight: bold; color: #2d5a27
-   !important; }
-          .bg-primary { background-color: #2d5a27
-  !important; }
-          .btn-primary { background-color: #2d5a27;
-  border-color: #2d5a27; }
-          .btn-primary:hover { background-color: #1e3c1a;
-  border-color: #1e3c1a; }
-          footer { background-color: #f8f9fa; margin-top:
-  auto; }
-          .form-section { border-left: 4px solid #2d5a27;
-  padding-left: 15px; margin-bottom: 2rem; }
-          .required { color: #dc3545; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
 
-          /* 出店申込用の薄い緑の背景 */
-          .stall-form-bg {
-              background-color: #e8f5e8;
-          }
-          .card-header.stall-header {
-              background-color: #c8e6c9;
-              border-bottom: 1px solid #a5d6a7;
-          }
-/* 出店フォーム背景：淡いピンク */
-.form-tint--stall {
-  background: #fde8ef; /* やわらかいピンク */
-  min-height: 100vh;
-  padding-top: 1rem;
-  padding-bottom: 2rem;
-}
+  <!-- Bootstrap（先に読み込む） -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 
-/* 上部ボタン配置 */
-.form-tint__wrap .top-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.btn-view-all {
-  background-color: #f06292;
-  border-color: #f06292;
-  color: white;
-}
-.btn-view-all:hover {
-  background-color: #ec407a;
-  border-color: #ec407a;
-  color: white;
-}
-      </style>
-  </head>
+  <!-- あなたの最終スタイル（常に最後） -->
+  <link rel="stylesheet" href="/css/forms.css" />
+</head>
   <body class="d-flex flex-column min-vh-100">
-      <nav class="navbar navbar-expand-lg navbar-light
-  bg-light">
-          <div class="container">
-              <a class="navbar-brand" href="/">🌸
-  菊名桜山公園</a>
-              <button class="navbar-toggler" type="button"
-  data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                  <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse"
-  id="navbarNav">
-                  <ul class="navbar-nav me-auto">
-                      <li class="nav-item">
-                          <a class="nav-link"
-  href="/">ホーム</a>
-                      </li>
-                      <li class="nav-item">
-                          <a class="nav-link"
-  href="/register">ボランティア登録</a>
-                      </li>
-                      <li class="nav-item">
-                          <a class="nav-link"
-  href="/apply">イベント申込</a>
-                      </li>
-                  </ul>
-                  <ul class="navbar-nav">
-                      <li class="nav-item">
-                          <a class="nav-link"
-  href="/admin">管理画面</a>
-                      </li>
-                  </ul>
-              </div>
-          </div>
-      </nav>
+     <!--
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+</nav>
+-->
+
+ <div class="form-tint--stall theme-stall">
+  <div class="container form-tint__wrap">
+    <!-- ← この内側に <form> が入っている状態にする -->
 
 <!-- 🎀 ピンク背景＆上部ボタン -->
-<div class="form-tint--stall">
-  <div class="container form-tint__wrap">
+
     <!-- 上部リンクボタン -->
-    <div class="d-flex top-links mb-3">
-      <a href="/" class="btn btn-view-all">🏠 トップへ</a>
-      <a href="/apply/<%= event.slug %>" class="btn btn-stall">📋 <%= event.title %> 申込トップ</a>
-    </div>
+<div class="top-links">
+  <a href="/" class="btn btn-view-all">🏠 トップへ</a>
+  <a href="/apply/<%= event.slug %>" class="btn btn-stall">📋 <%= event.title %> 申込トップ</a>
+</div>
 
     <!-- ↓ここから既存の main が始まる -->
 
@@ -116,7 +53,8 @@
                           <small
   class="text-muted">応募要項A準拠</small>
                       </div>
-                      <div class="card-body stall-form-bg">
+                      <div class="card-body">
+                        <div class="form-tint__wrap theme-stall"></div>
                           <% if (typeof errors !==
   'undefined' && errors.length > 0) { %>
                               <div class="alert
@@ -192,9 +130,7 @@
                                   <div class="mb-3">
                                       <label for="address"
   class="form-label">住所</label>
-                                      <textarea
-  class="form-control" id="address" name="address"
-  rows="2"><%= typeof formData !== 'undefined' ?
+                                      <textarea class="form-control" id="address" name="address" rows="1"><%= typeof formData !== 'undefined' ?
   formData.address || '' : '' %></textarea>
                                   </div>
 
@@ -518,13 +454,12 @@
 
                               <div class="d-grid gap-2
   d-md-flex justify-content-md-end">
-                                  <a href="/apply"
-  class="btn btn-secondary me-md-2">戻る</a>
-                                  <button type="submit"
-  class="btn btn-primary">申込む</button>
+                                  <a href="/apply/<%= event.slug %>" class="btn btn-secondary me-md-2">戻る</a>
+                                  <button type="submit" class="btn btn-accent">申込む</button>
                               </div>
                           </form>
-                      </div>
+                      </div> <!-- /.form-tint__wrap --> 
+                      </div> <!-- /.card-body -->
                   </div>
               </div>
           </div>
