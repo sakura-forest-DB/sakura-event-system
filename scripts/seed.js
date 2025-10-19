@@ -38,12 +38,15 @@ async function main() {
         description: '一年間の活動を振り返り、地域の皆様への感謝を込めたお祭りです。収穫体験、展示、出店など多彩なプログラムをご用意しています。'
       },
       {
-        title: '🎄Forest Christmas',
-        slug: 'forest-christmas',
-        date: new Date('2025-12-14T16:00:00'),
-        applicationStartDate: new Date('2025-08-01T00:00:00'), // テスト用: 8月1日から申込開始
-        location: '菊名桜山公園 イルミネーションエリア',
-        description: 'イルミネーション点灯式とクリスマスコンサート。温かい飲み物の提供やイルミネーション設営のお手伝いをお願いします。'
+  title: '🎄Forest Christmas',
+  slug: 'forest-christmas',
+  date: new Date('2025-12-14'),
+  isPublic: true,
+  status: 'OPEN',
+  description: `冬の森を彩るあかりとともに、ステージやクラフト、フード出店などが並ぶひととき。
+あなたの力を生かして、一緒に「Forest Christmas」を盛り上げませんか？`,
+  // ...他のフィールド
+}ption: 'イルミネーション点灯式とクリスマスコンサート。温かい飲み物の提供やイルミネーション設営のお手伝いをお願いします。'
       }
     ];
 
