@@ -128,18 +128,18 @@ import adminRoutes from './src/routes/admin.js';
   app.use(bodyParser.json());
   app.use(express.static(path.join(__dirname, 'public')));
 
-  // Session middleware
-  app.use(session({
-    secret: process.env.SESSION_SECRET ||
-  'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production', // HTTPS必須（本番環境）
-      httpOnly: true, // XSS対策
-      maxAge: 24 * 60 * 60 * 1000 // 24時間
-    }
-  }));
+  // Session middleware（trust proxy の“後”に置く）
+app.use(session({
+  secret: process.env.SESSION_SECRET,  // ← Render の Env に必ず設定
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // 本番は HTTPS クッキー
+    httpOnly: true,
+    sameSite: 'lax',                               // 通常の遷移で安定
+    maxAge: 24 * 60 * 60 * 1000                   // 24h（お好みでOK）
+  }
+}));
 
   // Routes
   app.use('/', homeRoutes);
