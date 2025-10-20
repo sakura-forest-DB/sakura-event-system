@@ -1,40 +1,104 @@
-<%- include('partials/header', { title: '出演申込 - 送信完了' }) %>
+<%- include('partials/header', { title: (event?.title || 'イベント') + ' - 出演申込 完了' }) %>
 
 <main class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
       <div class="card shadow-sm">
-        <div class="card-body text-center py-5">
-          <h3 class="fw-bold mb-3">🎉 送信が完了しました</h3>
+        <div class="card-body py-4">
 
-          <p class="mb-1">
-            <strong><%= (event && event.title) ? event.title : 'イベント' %></strong> への<strong>出演申込</strong>を受け付けました。
+          <!-- 見出し -->
+          <h3 class="fw-bold text-center mb-3">🎉 出演申込が完了しました</h3>
+          <p class="text-center mb-4">
+            <strong><%= event?.title || 'イベント' %></strong> への出演申込を受け付けました。
           </p>
 
-          <% if (typeof applicationNumber !== 'undefined') { %>
-            <p class="text-muted">受付番号：<strong><%= applicationNumber %></strong></p>
-          <% } else if (typeof application !== 'undefined' && application) { %>
-            <% if (application.receiptNo) { %>
-              <p class="text-muted">受付番号：<strong><%= application.receiptNo %></strong></p>
-            <% } else if (application.id) { %>
-              <p class="text-muted">受付ID：<strong><%= application.id %></strong></p>
-            <% } %>
+          <!-- ご注意 -->
+          <div class="alert alert-warning" role="alert">
+            <strong>ご注意ください：</strong>
+            この申込は <u>仮受付</u> です。正式な決定ではありません。後日、主催者（菊名桜山公園愛護会）からの連絡をもって確定となります。
+          </div>
+
+          <!-- 申込控えのお願い -->
+          <div class="alert alert-info" role="alert">
+            <div class="d-flex align-items-start gap-2">
+              <div>📝</div>
+              <div>
+                <strong>申込控えの保存をお願いします。</strong><br>
+                下の「印刷する」ボタンで、この完了画面を印刷（またはPDF保存／スクリーンショット）してください。<br>
+                （控えがないと後日の確認が難しくなる場合があります）
+              </div>
+            </div>
+          </div>
+
+          <!-- 受付番号（あれば表示） -->
+          <% if (typeof applicationNumber !== 'undefined' && applicationNumber) { %>
+            <p class="text-muted text-center">
+              受付番号：<strong><%= applicationNumber %></strong>
+            </p>
+          <% } else if (application?.receiptNo) { %>
+            <p class="text-muted text-center">
+              受付番号：<strong><%= application.receiptNo %></strong>
+            </p>
+          <% } else if (application?.id) { %>
+            <p class="text-muted text-center">
+              受付ID：<strong><%= application.id %></strong>
+            </p>
           <% } %>
 
-          <p class="text-muted small mt-3">
-            確認メールをお送りします。届かない場合は迷惑メールフォルダをご確認ください。
-          </p>
+          <!-- イベント情報 -->
+          <div class="mt-4 p-3 border rounded">
+            <h5 class="mb-3">📄 イベント情報</h5>
+            <dl class="row mb-0">
+              <dt class="col-4 col-sm-3">イベント</dt>
+              <dd class="col-8 col-sm-9"><%= event?.title || '—' %></dd>
 
-          <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+              <dt class="col-4 col-sm-3">開催日</dt>
+              <dd class="col-8 col-sm-9">
+                <%= event?.date ? new Date(event.date).toLocaleDateString('ja-JP') : '—' %>
+              </dd>
+
+              <dt class="col-4 col-sm-3">場所</dt>
+              <dd class="col-8 col-sm-9"><%= event?.location || '菊名桜山公園' %></dd>
+            </dl>
+          </div>
+
+          <!-- 今後の流れ -->
+          <div class="mt-4 p-3 border rounded bg-light">
+            <h5 class="mb-3">📬 今後の流れ</h5>
+            <ul class="mb-2">
+              <li>申込内容を確認の上、菊名桜山公園愛護会担当者よりご連絡いたします。</li>
+              <li>詳細な打合せ等は別途調整させていただきます。</li>
+              <li>ご質問がございましたら、下記メールアドレスまでお気軽にお問い合わせください。</li>
+            </ul>
+            <p class="mb-0 text-center">
+              📧 <a href="mailto:osawa-s@nifty.com">osawa-s@nifty.com</a>
+            </p>
+          </div>
+
+          <!-- 操作ボタン -->
+          <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4 no-print">
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print()">🖨️ 印刷する</button>
             <a href="/" class="btn btn-view-all">🏠 トップへ</a>
-            <% if (event && event.slug) { %>
+            <% if (event?.slug) { %>
               <a href="/apply/<%= event.slug %>" class="btn btn-performer">📋 申込トップへ</a>
             <% } %>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<!-- 印刷用スタイル -->
+<style>
+@media print {
+  nav, footer { display: none !important; }
+  .btn, .no-print { display: none !important; }
+  .card { box-shadow: none !important; border: none !important; }
+  .container { max-width: 900px; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
 
 <%- include('partials/footer') %>
