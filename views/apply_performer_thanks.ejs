@@ -1,0 +1,40 @@
+<%- include('partials/header', { title: '出演申込 - 送信完了' }) %>
+
+<main class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+          <h3 class="fw-bold mb-3">🎉 送信が完了しました</h3>
+
+          <p class="mb-1">
+            <strong><%= (event && event.title) ? event.title : 'イベント' %></strong> への<strong>出演申込</strong>を受け付けました。
+          </p>
+
+          <% if (typeof applicationNumber !== 'undefined') { %>
+            <p class="text-muted">受付番号：<strong><%= applicationNumber %></strong></p>
+          <% } else if (typeof application !== 'undefined' && application) { %>
+            <% if (application.receiptNo) { %>
+              <p class="text-muted">受付番号：<strong><%= application.receiptNo %></strong></p>
+            <% } else if (application.id) { %>
+              <p class="text-muted">受付ID：<strong><%= application.id %></strong></p>
+            <% } %>
+          <% } %>
+
+          <p class="text-muted small mt-3">
+            確認メールをお送りします。届かない場合は迷惑メールフォルダをご確認ください。
+          </p>
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+            <a href="/" class="btn btn-view-all">🏠 トップへ</a>
+            <% if (event && event.slug) { %>
+              <a href="/apply/<%= event.slug %>" class="btn btn-performer">📋 申込トップへ</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
