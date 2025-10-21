@@ -1,272 +1,112 @@
- import express from 'express';
-  import prisma from '../lib/prisma.js';
-  const router = express.Router();
+/// src/routes/apply-stall.js
+import express from 'express';
+import prisma from '../lib/prisma.js';
+const router = express.Router();
 
-  // 出店申込フォーム表示
-  router.get('/:slug/stall', async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+/**
+ * GET /apply/:slug/stall
+ * - 入力画面表示（セッション下書きがあれば復元）
+ */
+router.get('/:slug/stall', async (req, res) => {
+  const { slug } = req.params;
+  const event = await prisma.event.findUnique({ where: { slug } });
+  if (!event) return res.status(404).render('error', { title:'イベントが見つかりません', message:'指定されたイベントが見つかりません', error:{status:404} });
 
-      if (!event) {
-        return res.status(404).render('error', {
-          title: 'イベントが見つかりません',
-          message: '指定されたイベントが見つかりません',
-          error: { status: 404 }
-        });
-      }
+  const draft = (req.session && req.session.stallDraft) ? req.session.stallDraft : {};
+  return res.render('apply_stall', {
+    title: `${event.title} - 出店申込`,
+    event,
+    formData: draft,
+    errors: [],
+  });
+});
 
-      if (!event.isPublic || event.status !== 'OPEN') {
-        return res.render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
+/**
+ * POST /apply/:slug/stall
+ * - バリデーション（簡易）
+ * - セッションに下書き保存
+ * - 確認画面へ
+ */
 
-      // 申込開始日をチェック
-      const currentDate = new Date();
-      const canApply = !event.applicationStartDate ||
-  event.applicationStartDate <= currentDate;
-
-      if (!canApply) {
-        return res.render('apply-closed', {
-          title: '申込開始前',
-          event,
-          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
-        });
-      }
-
-      res.render('apply_stall', {
-        title: `${event.title} - 出店申込`,
-        event,
-        errors: [],
-        formData: {}
-      });
-    } catch (error) {
-      console.error('[stall GET] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: 'フォーム表示に失敗しました',
-        error: { status: 500 }
+// POST /apply/:slug/stall → 入力内容をセッションに保存して確認画面へ
+router.post('/:slug/stall', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event) {
+      return res.status(404).render('error', {
+        title: 'イベントが見つかりません',
+        message: '指定されたイベントが見つかりません',
+        error: { status: 404 },
       });
     }
-  });
 
-  // 出店申込処理
-  router.post('/:slug/stall', async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+    const formData = { ...req.body };                 // 入力値
+    if (req.session) req.session.stallDraft = formData; // 下書き保存
 
-      if (!event || !event.isPublic || event.status !==
-  'OPEN') {
-        return res.status(400).render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
+    return res.render('apply_stall_confirm', {
+      title: `${event.title} - 出店申込（確認）`,
+      event,
+      formData,
+    });
+  } catch (err) {
+    console.error('[POST stall confirm] ', err);
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: '確認処理に失敗しました。',
+      error: { status: 500 },
+    });
+  }
+});
 
-      // 申込開始日をチェック
-      const currentDate = new Date();
-      const canApply = !event.applicationStartDate ||
-  event.applicationStartDate <= currentDate;
-
-      if (!canApply) {
-        return res.status(400).render('apply-closed', {
-          title: '申込開始前',
-          event,
-          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
-        });
-      }
-
-      const {
-        groupName,
-        representative,
-        address,
-        email,
-        phone,
-        boothType,
-        items,
-        priceRangeMin,
-        priceRangeMax,
-        boothCount,
-        tentWidth,
-        tentDepth,
-        tentHeight,
-        vehicleCount,
-        vehicleType,
-        vehicleNumbers,
-        rentalTables,
-        rentalChairs,
-        questions,
-        privacyConsent,
-        marketingConsent
-      } = req.body;
-
-      const errors = [];
-
-      // バリデーション
-      if (!groupName) errors.push('参加団体名は必須です');
-      if (!representative)
-  errors.push('代表者名は必須です');
-      if (!email) errors.push('メールアドレスは必須です');
-      if (email &&
-  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-
-  errors.push('有効なメールアドレスを入力してください');
-      }
-      if (!phone) errors.push('電話番号は必須です');
-      if (!boothType)
-  errors.push('出店内容を選択してください');
-      if (!privacyConsent)
-  errors.push('個人情報の利用について同意が必要です');
-
-      // 数値バリデーション
-      if (priceRangeMin && priceRangeMax &&
-  parseInt(priceRangeMin) > parseInt(priceRangeMax)) {
-        errors.push('価格帯の設定が正しくありません');
-      }
-
-      if (errors.length > 0) {
-        return res.render('apply_stall', {
-          title: `${event.title} - 出店申込`,
-          event,
-          errors,
-          formData: req.body
-        });
-      }
-
-      // エラーがない場合は確認画面を表示
-      res.render('apply_stall_confirm', {
-        title: `${event.title} - 出店申込内容確認`,
-        formData: req.body,
-        event,
-        isPreview: false
-      });
-
-    } catch (error) {
-      console.error('[stall POST] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: '申込処理中にエラーが発生しました',
-        error: { status: 500 }
+/**
+ * POST /apply/:slug/stall/submit
+ * - DB保存（ここではサンプル）
+ * - 下書きクリア
+ * - 完了画面へ（application を渡す）
+ */
+// POST /apply/:slug/stall/submit → 送信・完了
+router.post('/:slug/stall/submit', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const event = await prisma.event.findUnique({ where: { slug } });
+    if (!event) {
+      return res.status(404).render('error', {
+        title: 'イベントが見つかりません',
+        message: '指定されたイベントが見つかりません',
+        error: { status: 404 },
       });
     }
-  });
 
-  // 出店申込最終送信処理
-  router.post('/:slug/stall/submit', async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const event = await prisma.event.findUnique({ where:
-  { slug } });
+    // 確認で保存した下書きを使う（なければ body）
+    const formData = (req.session && req.session.stallDraft)
+      ? req.session.stallDraft
+      : { ...req.body };
 
-      if (!event || !event.isPublic || event.status !==
-  'OPEN') {
-        return res.status(400).render('apply-closed', {
-          title: '申込受付終了',
-          event
-        });
-      }
+    // ここで本来は DB 保存（省略）。保存結果を application にしてもOK
+    const application = formData;
 
-      // 申込開始日をチェック
-      const currentDate = new Date();
-      const canApply = !event.applicationStartDate ||
-  event.applicationStartDate <= currentDate;
+    // 仮の受付番号
+    const fakeReceipt = 'STL-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
-      if (!canApply) {
-        return res.status(400).render('apply-closed', {
-          title: '申込開始前',
-          event,
-          applicationStartMessage: `申込開始: ${event.applicationStartDate.toLocaleDateString('ja-JP')}から`
-        });
-      }
+    // 下書きクリア
+    if (req.session) delete req.session.stallDraft;
 
-      const {
-        groupName,
-        representative,
-        address,
-        email,
-        phone,
-        boothType,
-        items,
-        priceRangeMin,
-        priceRangeMax,
-        boothCount,
-        tentWidth,
-        tentDepth,
-        tentHeight,
-        vehicleCount,
-        vehicleType,
-        vehicleNumbers,
-        rentalTables,
-        rentalChairs,
-        questions,
-        privacyConsent,
-        marketingConsent
-      } = req.body;
+    // 完了画面へ（申込内容を渡す！）
+    return res.render('apply_stall_thanks', {
+      title: `${event.title} - 出店申込 完了`,
+      event,
+      applicationNumber: fakeReceipt,
+      application,
+    });
+  } catch (err) {
+    console.error('[POST stall submit] ', err);
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: '送信処理でエラーが発生しました。',
+      error: { status: 500 },
+    });
+  }
+});
 
-      // 初回申込スナップショット用データ
-      const originalPayload = JSON.stringify(req.body);
-      const submittedAt = new Date();
-
-      // 出店申込作成（サーバーサイドでeventIdを決定）
-      const stallApplication = await
-  prisma.stallApplication.create({
-        data: {
-          groupName,
-          representative,
-          address: address || null,
-          email,
-          phone: phone || null,
-          eventId: event.id, // サーバーサイドで決定
-          boothType,
-          items: items || null,
-          priceRangeMin: priceRangeMin ?
-  parseInt(priceRangeMin) : null,
-          priceRangeMax: priceRangeMax ?
-  parseInt(priceRangeMax) : null,
-          boothCount: boothCount ? parseInt(boothCount) :
-  null,
-          tentWidth: tentWidth ? parseFloat(tentWidth) :
-  null,
-          tentDepth: tentDepth ? parseFloat(tentDepth) :
-  null,
-          tentHeight: tentHeight ? parseFloat(tentHeight) :
-   null,
-          vehicleCount: vehicleCount ?
-  parseInt(vehicleCount) : null,
-          vehicleType: vehicleType || null,
-          vehicleNumbers: vehicleNumbers || null,
-          rentalTables: rentalTables ?
-  parseInt(rentalTables) : null,
-          rentalChairs: rentalChairs ?
-  parseInt(rentalChairs) : null,
-          questions: questions || null,
-          privacyConsent: privacyConsent === 'on',
-          marketingConsent: marketingConsent === 'on',
-          originalPayload,
-          originalSubmittedAt: submittedAt
-        }
-      });
-
-      res.render('thanks', {
-        title: `${event.title} - 出店申込完了`,
-        type: 'stall',
-        application: stallApplication,
-        event
-      });
-
-    } catch (error) {
-      console.error('[stall submit] error', error);
-      res.status(500).render('error', {
-        title: 'エラー',
-        message: '申込送信中にエラーが発生しました',
-        error: { status: 500 }
-      });
-    }
-  });
-
-  export default router;
+export default router;

@@ -24,53 +24,133 @@
   <main class="container my-4 flex-grow-1">
     <div class="row justify-content-center">
       <div class="col-md-10">
-        <div class="card">
+        <div class="card shadow-sm">
           <div class="card-header bg-success text-white">
             <h4 class="mb-0">🏪 出店申込内容確認</h4>
-            <small class="text-light">内容をご確認の上、送信または修正してください</small>
+            <small class="text-light">内容をご確認の上、「✅ 内容確認後、送信する」を押してください</small>
           </div>
 
           <div class="card-body">
+
+            <% 
+              // ====== 値のヘルパ ======
+              const D = formData || {};
+              const pick = (...keys) => {
+                for (const k of keys) { if (D && D[k] != null && String(D[k]).trim() !== '') return String(D[k]); }
+                return '';
+              };
+              const show = (v, fallback='未入力') => (v && String(v).trim() !== '' ? v : fallback);
+              const yn   = (v) => (v ? '同意済み' : '—');
+
+              // 代表的な別名にも対応（旧/新フィールド両対応）
+              const groupName   = pick('groupName','orgName','name');
+              const representative = pick('representative','contactName');
+              const email       = pick('email');
+              const phone       = pick('phone','tel');
+              const address     = pick('address');
+
+              // 出店詳細
+              const boothType   = pick('boothType','stallType');          // 飲食/物販 など
+              const boothCount  = pick('boothCount','plotCount','blockCount');
+              const stallContent= pick('stallContent','content','description');
+              const salesItems  = pick('salesItems','items');
+              const priceMin    = pick('priceRangeMin','priceMin');
+              const priceMax    = pick('priceRangeMax','priceMax');
+
+              // レンタル類
+              const rentalTables = pick('rentalTables','tables');
+              const rentalChairs = pick('rentalChairs','chairs');
+
+              // その他
+              const questions   = pick('questions','requests','notes');
+
+              // 同意
+              const privacyConsent   = !!(D.privacyConsent || D.agreePrivacy);
+              const marketingConsent = !!(D.marketingConsent || D.agreePublicity);
+            %>
+
             <!-- 基本情報 -->
             <div class="form-section">
               <h5>📝 基本情報</h5>
-              <p><strong>参加団体名：</strong> <%= formData.groupName %></p>
-              <p><strong>代表者名：</strong> <%= formData.representative %></p>
-              <p><strong>メール：</strong> <%= formData.email %></p>
-              <p><strong>電話番号：</strong> <%= formData.phone %></p>
-              <p><strong>住所：</strong> <%= formData.address || '未入力' %></p>
+              <dl class="row mb-0">
+                <dt class="col-4 col-sm-3">参加団体名</dt>
+                <dd class="col-8 col-sm-9"><%= show(groupName) %></dd>
+
+                <dt class="col-4 col-sm-3">代表者名</dt>
+                <dd class="col-8 col-sm-9"><%= show(representative) %></dd>
+
+                <dt class="col-4 col-sm-3">メールアドレス</dt>
+                <dd class="col-8 col-sm-9"><%= show(email) %></dd>
+
+                <dt class="col-4 col-sm-3">電話番号</dt>
+                <dd class="col-8 col-sm-9"><%= show(phone) %></dd>
+
+                <dt class="col-4 col-sm-3">住所</dt>
+                <dd class="col-8 col-sm-9"><%= show(address,'—') %></dd>
+              </dl>
             </div>
 
             <!-- 出店内容 -->
             <div class="form-section">
               <h5>🏷️ 出店内容</h5>
-              <p><strong>出店内容：</strong> <%= formData.item || '未入力' %></p>
-              <p><strong>希望区画：</strong> <%= formData.boothCount || '1' %> 枠</p>
-              <p><strong>販売品目：</strong> <%= formData.products || '未入力' %></p>
+              <dl class="row mb-0">
+                <dt class="col-4 col-sm-3">出店種別</dt>
+                <dd class="col-8 col-sm-9"><%= show(boothType,'—') %></dd>
+
+                <dt class="col-4 col-sm-3">希望区画</dt>
+                <dd class="col-8 col-sm-9"><%= show(boothCount,'—') %> 枠</dd>
+
+                <dt class="col-4 col-sm-3">出店内容</dt>
+                <dd class="col-8 col-sm-9"><%= show(stallContent) %></dd>
+
+                <dt class="col-4 col-sm-3">販売品目</dt>
+                <dd class="col-8 col-sm-9"><%= show(salesItems) %></dd>
+
+                <dt class="col-4 col-sm-3">価格帯</dt>
+                <dd class="col-8 col-sm-9">
+                  <% if (priceMin || priceMax) { %>
+                    <%= priceMin ? (priceMin + '円') : '—' %> 〜 <%= priceMax ? (priceMax + '円') : '—' %>
+                  <% } else { %>
+                    — 
+                  <% } %>
+                </dd>
+
+                <dt class="col-4 col-sm-3">レンタル：机</dt>
+                <dd class="col-8 col-sm-9"><%= show(rentalTables,'0') %> 台</dd>
+
+                <dt class="col-4 col-sm-3">レンタル：椅子</dt>
+                <dd class="col-8 col-sm-9"><%= show(rentalChairs,'0') %> 脚</dd>
+
+                <dt class="col-4 col-sm-3">連絡事項</dt>
+                <dd class="col-8 col-sm-9"><%= show(questions,'—') %></dd>
+              </dl>
             </div>
 
-            <!-- 個人情報同意 -->
+            <!-- 同意事項 -->
             <div class="form-section">
-              <h5>🔒 個人情報の取扱い同意</h5>
-              <p>ご入力いただいた個人情報は、本イベント運営の目的でのみ利用します。</p>
+              <h5>🔒 同意事項</h5>
+              <dl class="row mb-0">
+                <dt class="col-6 col-sm-4">個人情報の取扱いに同意</dt>
+                <dd class="col-6 col-sm-8"><%= yn(privacyConsent) %></dd>
+
+                <dt class="col-6 col-sm-4">広報等での使用に同意</dt>
+                <dd class="col-6 col-sm-8"><%= yn(marketingConsent) %></dd>
+              </dl>
             </div>
 
             <!-- 確認・送信ボタン -->
-            <div class="text-center mt-4">
-              <form method="POST" action="/apply/<%= event.slug %>/stall/submit" class="d-inline">
-                <% for (const [key, value] of Object.entries(formData)) { %>
-                  <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
-                <% } %>
-                <button type="submit" class="btn btn-success btn-lg me-3">✅ 内容確認後、送信する</button>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <!-- 戻って修正：GETで入力画面へ（セッション草稿を復元して再表示） -->
+              <form method="GET" action="/apply/<%= event.slug %>/stall" class="me-md-2">
+                <button type="submit" class="btn btn-secondary">✏️ 戻って修正</button>
               </form>
 
-              <form method="POST" action="/apply/<%= event.slug %>/stall" class="d-inline">
-                <% for (const [key, value] of Object.entries(formData)) { %>
-                  <input type="hidden" name="<%= key %>" value="<%= value || '' %>">
-                <% } %>
-                <button type="submit" class="btn btn-outline-secondary btn-lg">✏️ 戻って修正する</button>
+              <!-- 送信：POSTで /submit -->
+              <form method="POST" action="/apply/<%= event.slug %>/stall/submit">
+                <button type="submit" class="btn btn-success">✅ 内容確認後、送信する</button>
               </form>
             </div>
+
           </div>
         </div>
       </div>

@@ -792,4 +792,105 @@ textarea.form-control{
   color: #000 !important;
 }
 /* === /VOLUNTEER BUTTON REVERSE ==================================== */
+
+/* === HERO CTA BUTTONS: vertical center & consistent size ================ */
+.btn-volunteer,
+.btn-stall,
+.btn-performer{
+  display: flex;                /* ← 中身をフレックス化 */
+  align-items: center;          /* ← 縦中央 */
+  justify-content: center;      /* ← 横中央 */
+  min-height: 72px;             /* ボタンの見た目の高さを統一 */
+  padding: 12px 28px;           /* 上下左右バランスをとる */
+  line-height: 1.2;             /* 文字の行高さを小さめに */
+  border-radius: 14px;          /* 角の丸み */
+  font-weight: 700;
+  font-size: 1.25rem;           /* 大きく、でも詰まらない程度に */
+  box-shadow: 0 6px 16px rgba(0,0,0,.10);
+  border: 0;                    /* 余計な境界線を消す（色で判断できるため） */
+  text-decoration: none;
+}
+
+/* 幅をそろえたい場合（任意） */
+@media (min-width: 768px){
+  .btn-volunteer, .btn-stall, .btn-performer { min-width: 16rem; }
+}
+
+/* 色（既存の色味に合わせて軽く整える） */
+.btn-volunteer{
+  background:#e6f0e6; color:#213;
+  border:1px solid #cfe3cf;    /* ほんの少しだけ輪郭 */
+}
+.btn-volunteer:hover{ filter:brightness(.98); transform: translateY(-1px); }
+
+.btn-stall{      background:#e83e8c; color:#fff; }
+.btn-stall:hover{background:#d63384; color:#fff; transform: translateY(-1px);}
+
+.btn-performer{      background:#6f42c1; color:#fff; }
+.btn-performer:hover{background:#5b33a8; color:#fff; transform: translateY(-1px);}
+
+/* スマホでは気持ち小さく */
+@media (max-width: 576px){
+  .btn-volunteer, .btn-stall, .btn-performer{
+    min-height: 60px;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+  }
+}
+/* === optional: PCサイズでは少しスリムに見せる ==================== */
+@media (min-width: 992px) {
+  .btn-volunteer,
+  .btn-stall,
+  .btn-performer {
+    min-height: 64px;   /* ← 72px → 64px に */
+    font-size: 1.15rem; /* ← 1.25rem → 少し小さめ */
+    padding: 10px 24px; /* 上下を少し詰める */
+  }
+}
+
+/* === TOP LINK BUTTONS: vertical alignment fix ==================== */
+.top-links .btn {
+  display: inline-flex;
+  align-items: center;   /* ← 中央寄せ（縦） */
+  justify-content: center;
+  line-height: 1.2;
+  gap: 0.4rem;           /* 絵文字と文字の間に少し余白 */
+  padding: 0.6rem 1.2rem;
+}
+
+/* 文字と絵文字のバランスを微調整 */
+.top-links .btn span,
+.top-links .btn {
+  vertical-align: middle;
+}
+
+/* === TOP LINK BUTTONS: vertical alignment fix ==================== */
+.top-links .btn {
+  display: inline-flex;
+  align-items: center;   /* 縦の中央揃え */
+  justify-content: center;
+  line-height: 1.2;
+  gap: 0.35rem;          /* 絵文字と文字の間を自然に調整 */
+  padding: 0.6rem 1.2rem;
+}
+
+/* 文字の上下位置を微調整 */
+.top-links .btn span,
+.top-links .btn {
+  vertical-align: middle;
+}
+/* === 申込完了画面のボタン整列調整 === */
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  vertical-align: middle;
+}
+.btn-view-all img,
+.btn-view-all svg,
+.btn-view-all span {
+  vertical-align: middle;
+}
+
 /* === CSS LOADED MARKER v1 === */

@@ -10,34 +10,55 @@
     </div>
   </section>
 
-  <!-- 申込ボタンエリア -->
-  <section class="container my-5">
-    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-      <% if (upcomingEvents && upcomingEvents.length > 0) { %>
-        <!-- 直近イベントに紐づいた3ボタン -->
-        <a href="/register" class="btn btn-volunteer btn-lg">
+<!-- 申込ボタンエリア -->
+<section class="container my-5">
+  <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+    <% if (upcomingEvents && upcomingEvents.length > 0) { %>
+      <!-- ボランティア登録 + 申込状況確認 -->
+      <div class="text-center me-md-3">
+        <a href="/register" class="btn btn-volunteer btn-lg mb-2">
           🙋 ボランティア登録
         </a>
-        <a href="/apply/<%= upcomingEvents[0].slug %>/stall" class="btn btn-stall btn-lg">
-          🏪 出店申込
+        <br>
+        <a href="/status" class="btn btn-outline-dark btn-sm">
+          🧾 登録状況を確認
         </a>
-        <a href="/apply/<%= upcomingEvents[0].slug %>/performer" class="btn btn-performer btn-lg">
-          🎭 出演申込
-        </a>
-      <% } else { %>
-        <!-- イベントがない場合は申込系を無効化 -->
-        <a href="/register" class="btn btn-volunteer btn-lg">
+        <p class="text-muted small mt-1 mb-0">
+          ※ 登録時のメールアドレスと受付番号で照会できます
+        </p>
+      </div>
+
+      <!-- イベント関連 -->
+      <a href="/apply/<%= upcomingEvents[0].slug %>/stall" class="btn btn-stall btn-lg">
+        🏪 出店申込
+      </a>
+      <a href="/apply/<%= upcomingEvents[0].slug %>/performer" class="btn btn-performer btn-lg">
+        🎭 出演申込
+      </a>
+    <% } else { %>
+      <!-- イベントがない場合 -->
+      <div class="text-center me-md-3">
+        <a href="/register" class="btn btn-volunteer btn-lg mb-2">
           🙋 ボランティア登録
         </a>
-        <button class="btn btn-stall btn-lg" disabled>
-          🏪 出店申込（準備中）
-        </button>
-        <button class="btn btn-performer btn-lg" disabled>
-          🎭 出演申込（準備中）
-        </button>
-      <% } %>
-    </div>
-  </section>
+        <br>
+        <a href="/status" class="btn btn-outline-dark btn-sm">
+          🧾 登録状況を確認
+        </a>
+        <p class="text-muted small mt-1 mb-0">
+          ※ 登録時のメールアドレスと受付番号で照会できます
+        </p>
+      </div>
+
+      <button class="btn btn-stall btn-lg" disabled>
+        🏪 出店申込（準備中）
+      </button>
+      <button class="btn btn-performer btn-lg" disabled>
+        🎭 出演申込（準備中）
+      </button>
+    <% } %>
+  </div>
+</section>
 
   <!-- 募集中のイベント一覧 -->
   <section class="container my-5">
@@ -56,8 +77,8 @@
                 </p>
 
                 <% if (event.description) { %>
-                  <p class="card-text text-muted small"><%= event.description %></p>
-                <% } %>
+  <p class="card-text text-muted small"><%- event.description %></p>
+<% } %>
 
                 <div class="mt-auto">
                   <% if (!event.applicationStartDate || new Date(event.applicationStartDate) <= new Date()) { %>

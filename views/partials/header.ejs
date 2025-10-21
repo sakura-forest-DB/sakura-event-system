@@ -141,14 +141,21 @@
     <div class="container">
       <a class="navbar-brand" href="/">🌸 菊名桜山公園</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="メニュー切替">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="mainNav" class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
-          <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
-          <li class="nav-item"><a class="nav-link" href="/status">申込状況確認</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+       <span class="navbar-toggler-icon"></span>
+</button>
+
+<div id="mainNav" class="collapse navbar-collapse">
+  <ul class="navbar-nav me-auto">
+    <li class="nav-item"><a class="nav-link" href="/">ホーム</a></li>
+
+    <% if (typeof hideRegister === 'undefined' || !hideRegister) { %>
+      <li class="nav-item"><a class="nav-link" href="/register">ボランティア登録</a></li>
+    <% } %>
+
+    <% if (typeof hideStatus === 'undefined' || !hideStatus) { %>
+      <li class="nav-item"><a class="nav-link" href="/status">申込状況確認</a></li>
+    <% } %>
+  </ul>
+</div>
+</div>
+</nav>

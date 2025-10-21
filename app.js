@@ -141,30 +141,40 @@ app.use(session({
   }
 }));
 
+
+
+// === 環境バッジ用ローカル変数を EJS に渡す ===
+app.use((req, res, next) => {
+  res.locals.runtimeEnv = process.env.NODE_ENV || 'development';
+  next();
+});
+
+
   // Routes
   app.use('/', homeRoutes);
-  if (rateLimit) {
-    const formLimiter = rateLimit({
-      windowMs: 5 * 60 * 1000, // 5分
-      max: process.env.NODE_ENV === 'production' ? 20 : 100, // 研修中は20回まで
-      message: 'Too many form submissions, please try again later.',
-      trustProxy: true // Render環境用の設定
-    });
-    console.log('[DEBUG] Setting up routes with rate limiting');
-    // （rateLimit を使っている側）
+ // （任意）フォーム系にだけレート制限をかけたい場合
+if (rateLimit) {
+  const formLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: process.env.NODE_ENV === 'production' ? 20 : 100,
+    message: 'Too many form submissions, please try again later.',
+    trustProxy: true
+  });
+  // 例：/apply と /register にだけ適用
+  app.use('/apply', formLimiter);
+  app.use('/register', formLimiter);
+}
+
+// === ルート登録（ここを“1か所”に統一） ===
 app.use('/register', registerRoutes);
-app.use('/apply', applyPerformerRoutes); // ← 出演を先に
-app.use('/apply', applyStallRoutes);     // ← 出店を次に
-app.use('/apply', applyBaseRoutes);      // ← ベースを最後に
-  } else {
-   // （else 側も同様に順序統一）
-app.use('/register', registerRoutes);
-app.use('/apply',    applyPerformerRoutes); // 具体①
-app.use('/apply',    applyStallRoutes);     // 具体②
-app.use('/apply',    applyRoutes);          // ベース
-  }
-  app.use('/status', statusRoutes);
-  app.use('/admin', adminRoutes);
+app.use('/apply',    applyPerformerRoutes); // 出演
+app.use('/apply',    applyStallRoutes);     // 出店
+app.use('/apply',    applyBaseRoutes);      // ベース（/apply/:slug）
+app.use('/status',   statusRoutes);
+app.use('/admin',    adminRoutes);
+app.use('/',         homeRoutes);
+
+// === ここまで ===
 
   // Error handling
   app.use((err, req, res, next) => {

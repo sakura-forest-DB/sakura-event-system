@@ -1,5 +1,8 @@
 <%- include('partials/header', { title: (event?.title || 'イベント') + ' - 出店申込 完了' }) %>
 
+<!-- ▼印刷対象 -->
+<div class="print-area">
+
 <main class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
@@ -32,16 +35,16 @@
 
           <!-- 受付番号（あれば表示） -->
           <% if (typeof applicationNumber !== 'undefined' && applicationNumber) { %>
-            <p class="text-muted text-center">
-              受付番号：<strong><%= applicationNumber %></strong>
+            <p class="text-muted text-center">受付番号：
+              <strong><%= applicationNumber %></strong>
             </p>
           <% } else if (application?.receiptNo) { %>
-            <p class="text-muted text-center">
-              受付番号：<strong><%= application.receiptNo %></strong>
+            <p class="text-muted text-center">受付番号：
+              <strong><%= application.receiptNo %></strong>
             </p>
           <% } else if (application?.id) { %>
-            <p class="text-muted text-center">
-              受付ID：<strong><%= application.id %></strong>
+            <p class="text-muted text-center">受付ID：
+              <strong><%= application.id %></strong>
             </p>
           <% } %>
 
@@ -53,14 +56,68 @@
               <dd class="col-8 col-sm-9"><%= event?.title || '—' %></dd>
 
               <dt class="col-4 col-sm-3">開催日</dt>
-              <dd class="col-8 col-sm-9">
-                <%= event?.date ? new Date(event.date).toLocaleDateString('ja-JP') : '—' %>
-              </dd>
+              <dd class="col-8 col-sm-9"><%= event?.date ? new Date(event.date).toLocaleDateString('ja-JP') : '—' %></dd>
 
               <dt class="col-4 col-sm-3">場所</dt>
               <dd class="col-8 col-sm-9"><%= event?.location || '菊名桜山公園' %></dd>
             </dl>
           </div>
+
+          <!-- 申込内容（自動マッピング） -->
+          <% if (application && Object.keys(application).length) { %>
+  <div class="mt-4 p-3 border rounded">
+    <h5 class="mb-3">🛍️ 申込内容</h5>
+    <dl class="row mb-0">
+      <%
+        // 非表示にするキー
+        const HIDE = new Set(['_csrf', 'eventId']);
+
+        // キー → 表示ラベル
+        const LABELS = {
+          groupName:        '参加団体名',
+          representative:   '代表者名',
+          email:            'メールアドレス',
+          phone:            '電話番号',
+          address:          '住所',
+
+          boothType:        '出店種別',
+          boothCount:       '希望区画数',
+          priceRangeMin:    '価格帯（最小）',
+          priceRangeMax:    '価格帯（最大）',
+          salesItems:       '販売品目',
+
+          rentalTables:     'レンタル机',
+          rentalChairs:     'レンタル椅子',
+
+          vehicleType:      '車両タイプ',
+          vehicleNumber:    '車両ナンバー',
+
+          privacyConsent:   '個人情報の取扱いに同意',
+          marketingConsent: '広報等での使用に同意',
+        };
+
+        // 数値に単位を付けたいキー
+        const UNITS = {
+          boothCount:    '枠',
+          rentalTables:  '台',
+          rentalChairs:  '脚',
+        };
+
+        for (const [k, raw] of Object.entries(application)) {
+          if (HIDE.has(k)) continue;
+
+          // 値の整形
+          let v = Array.isArray(raw) ? raw.join(', ') : (raw ?? '');
+          if (String(v).trim() === '') continue;
+          if (v === 'on') v = '同意する';
+          if (UNITS[k] && /^\d+$/.test(String(v))) v = `${v} ${UNITS[k]}`;
+      %>
+        <dt class="col-5 col-sm-4"><%= LABELS[k] || k %></dt>
+        <dd class="col-7 col-sm-8"><%= v %></dd>
+      <% } %>
+    </dl>
+  </div>
+<% } %>
 
           <!-- 今後の流れ -->
           <div class="mt-4 p-3 border rounded bg-light">
@@ -75,7 +132,7 @@
             </p>
           </div>
 
-          <!-- 操作ボタン -->
+          <!-- 操作ボタン（印刷/トップ/申込トップへ） -->
           <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4 no-print">
             <button type="button" class="btn btn-outline-secondary" onclick="window.print()">🖨️ 印刷する</button>
             <a href="/" class="btn btn-view-all">🏠 トップへ</a>
@@ -90,9 +147,17 @@
   </div>
 </main>
 
+</div>
+<!-- ▲印刷対象ここまで -->
+
 <!-- 印刷用スタイル -->
 <style>
 @media print {
+  /* 画面の他要素は隠し、印刷範囲のみ表示 */
+  body * { visibility: hidden !important; }
+  .print-area, .print-area * { visibility: visible !important; }
+  .print-area { position: static !important; }
+
   nav, footer { display: none !important; }
   .btn, .no-print { display: none !important; }
   .card { box-shadow: none !important; border: none !important; }

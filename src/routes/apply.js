@@ -1,7 +1,6 @@
- import express from 'express';
-  import prisma from '../lib/prisma.js';
-
-  const router = express.Router();
+import express from 'express';
+import prisma from '../lib/prisma.js';
+const router = express.Router();
 
   // イベント申込分岐ページ表示（slugなしは404）
   router.get('/', (req, res) =>

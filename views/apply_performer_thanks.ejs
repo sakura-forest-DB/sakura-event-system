@@ -1,5 +1,8 @@
 <%- include('partials/header', { title: (event?.title || 'イベント') + ' - 出演申込 完了' }) %>
 
+<!-- ▼ここから印刷対象 -->
+<div class="print-area">
+
 <main class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
@@ -61,7 +64,85 @@
               <dd class="col-8 col-sm-9"><%= event?.location || '菊名桜山公園' %></dd>
             </dl>
           </div>
+<% if (application && Object.keys(application).length) { %>
+  <div class="mt-4 p-3 border rounded">
+    <h5 class="mb-3">📝 申込内容</h5>
 
+    <%
+      // 1) キー→日本語ラベル
+      const LABELS = {
+        groupName:        '参加団体名',
+        representative:   '代表者名',
+        email:            'メールアドレス',
+        phone:            '電話番号',
+        address:          '住所',
+        actName:          '出演名',
+        genre:            'ジャンル',
+        performance:      '演目・内容',
+        performerCount:   '出演人数',
+        slotCount:        '希望出演枠数',
+        audioSourceOnly:  '音源のみ（カラオケ等）',
+        rentalAmp:        'アンプ貸出希望',
+        rentalMic:        'マイク貸出希望',
+        vehicleCount:     '車両台数',
+        vehicleNumbers:   '車両ナンバー',
+        links:            '参考リンク',
+        requests:         '連絡事項',
+        privacyConsent:   '個人情報の取扱いに同意',
+        marketingConsent: '広報等での使用に同意'
+      };
+
+      // 2) 単位を付けたい数値系
+      const UNITS = { performerCount: '名', slotCount: '枠', vehicleCount: '台' };
+
+      // 3) 表示順（必要ならお好みで並べ替え）
+      const ORDER = [
+        'groupName','representative','email','phone','address',
+        'actName','genre','performance',
+        'performerCount','slotCount',
+        'audioSourceOnly','rentalAmp','rentalMic',
+        'vehicleCount','vehicleNumbers',
+        'links','requests',
+        'privacyConsent','marketingConsent'
+      ];
+
+      // 4) 値の整形
+      function fmt(key, val) {
+        if (val === null || val === undefined) return '';
+        if (typeof val === 'boolean') return val ? 'はい' : 'いいえ';
+        if (Array.isArray(val)) return val.filter(v => v != null && String(v).trim() !== '').join('、');
+        const s = String(val).trim();
+        if (!s) return '';
+        return UNITS[key] ? `${s}${UNITS[key]}` : s;
+      }
+
+      // 5) 非表示にしたいキー（CSRF など）
+      const HIDE = new Set(['_csrf']);
+    %>
+
+    <dl class="row mb-0">
+      <% ORDER.forEach((k) => {
+           if (HIDE.has(k)) return;
+           if (!(k in application)) return;
+           const txt = fmt(k, application[k]);
+           if (!txt) return;
+      %>
+        <dt class="col-4 col-sm-3"><%= LABELS[k] || k %></dt>
+        <dd class="col-8 col-sm-9"><%= txt %></dd>
+      <% }) %>
+      <% // ORDERに入っていない“その他のキー”も念のため表示する場合は以下をON
+         Object.keys(application).forEach((k) => {
+           if (HIDE.has(k)) return;
+           if (ORDER.includes(k)) return;
+           const txt = fmt(k, application[k]);
+           if (!txt) return;
+      %>
+        <dt class="col-4 col-sm-3"><%= LABELS[k] || k %></dt>
+        <dd class="col-8 col-sm-9"><%= txt %></dd>
+      <% }) %>
+    </dl>
+  </div>
+<% } %>
           <!-- 今後の流れ -->
           <div class="mt-4 p-3 border rounded bg-light">
             <h5 class="mb-3">📬 今後の流れ</h5>
@@ -90,9 +171,18 @@
   </div>
 </main>
 
+</div>
+<!-- ▲ここまで印刷対象 -->
+
 <!-- 印刷用スタイル -->
 <style>
 @media print {
+   @page { margin: 12mm; }  /* ← お好みで 10–15mm 程度 */
+    /* いったん全非表示にして、印刷範囲だけ戻す */
+  body * { visibility: hidden !important; }
+  .print-area, .print-area * { visibility: visible !important; }
+  .print-area { position: static !important; }
+
   nav, footer { display: none !important; }
   .btn, .no-print { display: none !important; }
   .card { box-shadow: none !important; border: none !important; }
