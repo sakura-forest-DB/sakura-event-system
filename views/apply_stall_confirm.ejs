@@ -91,52 +91,91 @@
             </div>
 
             <!-- 出店内容 -->
-            <div class="form-section">
-              <h5>🏷️ 出店内容</h5>
-              <dl class="row mb-0">
-                <dt class="col-4 col-sm-3">出店種別</dt>
-                <dd class="col-8 col-sm-9"><%= show(boothType,'—') %></dd>
+            <!-- 出店内容 -->
+<div class="form-section">
+  <h5>🏷️ 出店内容</h5>
 
-                <dt class="col-4 col-sm-3">希望区画</dt>
-                <dd class="col-8 col-sm-9"><%= show(boothCount,'—') %> 枠</dd>
+  <% if (formData && Object.keys(formData).length) { %>
+    <div class="mt-3 p-3 border rounded bg-white">
+      <h6 class="mb-3">🛍️ 入力内容の確認</h6>
 
-                <dt class="col-4 col-sm-3">出店内容</dt>
-                <dd class="col-8 col-sm-9"><%= show(stallContent) %></dd>
+      <%
+      // ====== ラベル・単位・整形 ======
+      const LABELS = {
+        groupName: '参加団体名',
+        representative: '代表者名',
+        address: '住所',
+        email: 'メールアドレス',
+        phone: '電話番号',
 
-                <dt class="col-4 col-sm-3">販売品目</dt>
-                <dd class="col-8 col-sm-9"><%= show(salesItems) %></dd>
+        boothType: '出店種別',
+        boothCount: '希望区画数',
+        items: '販売品目',
+        priceRangeMin: '価格帯（最小）',
+        priceRangeMax: '価格帯（最大）',
+        rentalTables: 'レンタル机',
+        rentalChairs: 'レンタル椅子',
 
-                <dt class="col-4 col-sm-3">価格帯</dt>
-                <dd class="col-8 col-sm-9">
-                  <% if (priceMin || priceMax) { %>
-                    <%= priceMin ? (priceMin + '円') : '—' %> 〜 <%= priceMax ? (priceMax + '円') : '—' %>
-                  <% } else { %>
-                    — 
-                  <% } %>
-                </dd>
+        vehicleType: '車両タイプ',
+        vehicleCount: '車両台数',
+        vehicleNumbers: '車両ナンバー',
+        questions: '連絡事項',
 
-                <dt class="col-4 col-sm-3">レンタル：机</dt>
-                <dd class="col-8 col-sm-9"><%= show(rentalTables,'0') %> 台</dd>
+        privacyConsent: '個人情報の取扱いに同意',
+        marketingConsent: '広報等での使用に同意'
+      };
 
-                <dt class="col-4 col-sm-3">レンタル：椅子</dt>
-                <dd class="col-8 col-sm-9"><%= show(rentalChairs,'0') %> 脚</dd>
+      const data = { ...formData };
+      data.items      = data.items      || data.salesItems; // 販売品目
+      data.boothCount = data.boothCount || data.plotCount || data.blockCount;
 
-                <dt class="col-4 col-sm-3">連絡事項</dt>
-                <dd class="col-8 col-sm-9"><%= show(questions,'—') %></dd>
-              </dl>
-            </div>
+      const UNITS = { boothCount: '枠', priceRangeMin: '円', priceRangeMax: '円', vehicleCount: '台' };
+      const HIDE  = new Set(['_csrf']);
 
-            <!-- 同意事項 -->
-            <div class="form-section">
-              <h5>🔒 同意事項</h5>
-              <dl class="row mb-0">
-                <dt class="col-6 col-sm-4">個人情報の取扱いに同意</dt>
-                <dd class="col-6 col-sm-8"><%= yn(privacyConsent) %></dd>
+      function fmt(key, val) {
+        if (val == null) return '';
+        if (Array.isArray(val)) return val.filter(s => String(s).trim() !== '').join('、');
+        const s = String(val).trim();
+        if (!s) return '';
+        return UNITS[key] ? `${s}${UNITS[key]}` : s;
+      }
 
-                <dt class="col-6 col-sm-4">広報等での使用に同意</dt>
-                <dd class="col-6 col-sm-8"><%= yn(marketingConsent) %></dd>
-              </dl>
-            </div>
+      const ORDER = [
+        'groupName','representative','email','phone','address',
+        'boothType','boothCount','items',
+        'priceRangeMin','priceRangeMax',
+        'rentalTables','rentalChairs',
+        'vehicleType','vehicleCount','vehicleNumbers',
+        'questions',
+        'privacyConsent','marketingConsent'
+      ];
+      %>
+
+      <dl class="row mb-0 dl-2col">
+        <% ORDER.forEach((k) => {
+             if (HIDE.has(k)) return;
+             if (!(k in data)) return;
+             const txt = fmt(k, data[k]);
+             if (!txt) return;
+        %>
+          <dt class="col-5 col-md-4"><%= LABELS[k] || k %></dt>
+          <dd class="col-7 col-md-8"><%= txt %></dd>
+        <% }) %>
+
+        <% // その他のキーも表示したい場合は以下をON
+           Object.keys(data).forEach((k) => {
+             if (HIDE.has(k)) return;
+             if (ORDER.includes(k)) return;
+             const txt = fmt(k, data[k]);
+             if (!txt) return;
+        %>
+          <dt class="col-5 col-md-4"><%= LABELS[k] || k %></dt>
+          <dd class="col-7 col-md-8"><%= txt %></dd>
+        <% }) %>
+      </dl>
+    </div>
+  <% } %>
+</div>
 
             <!-- 確認・送信ボタン -->
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">

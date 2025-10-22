@@ -67,33 +67,34 @@
           <% if (application && Object.keys(application).length) { %>
   <div class="mt-4 p-3 border rounded">
     <h5 class="mb-3">🛍️ 申込内容</h5>
-    <dl class="row mb-0">
+    <dl class="row mb-0 dl-2col">
       <%
         // 非表示にするキー
         const HIDE = new Set(['_csrf', 'eventId']);
 
         // キー → 表示ラベル
         const LABELS = {
-          groupName:        '参加団体名',
-          representative:   '代表者名',
-          email:            'メールアドレス',
-          phone:            '電話番号',
-          address:          '住所',
+          groupName: '参加団体名',
+  representative: '代表者名',
+  address: '住所',
+  email: 'メールアドレス',
+  phone: '電話番号',
 
-          boothType:        '出店種別',
-          boothCount:       '希望区画数',
-          priceRangeMin:    '価格帯（最小）',
-          priceRangeMax:    '価格帯（最大）',
-          salesItems:       '販売品目',
+  boothType: '出店種別',
+  boothCount: '希望区画数',
+  items: '販売品目',
+  priceRangeMin: '価格帯（最小）',
+  priceRangeMax: '価格帯（最大）',
+  rentalTables: 'レンタル机',
+  rentalChairs: 'レンタル椅子',
 
-          rentalTables:     'レンタル机',
-          rentalChairs:     'レンタル椅子',
+  vehicleType: '車両タイプ',
+  vehicleCount: '車両台数',
+  vehicleNumbers: '車両ナンバー',
+  questions: '連絡事項',
 
-          vehicleType:      '車両タイプ',
-          vehicleNumber:    '車両ナンバー',
-
-          privacyConsent:   '個人情報の取扱いに同意',
-          marketingConsent: '広報等での使用に同意',
+  privacyConsent: '個人情報の取扱いに同意',
+  marketingConsent: '広報等での使用に同意',
         };
 
         // 数値に単位を付けたいキー
@@ -153,16 +154,24 @@
 <!-- 印刷用スタイル -->
 <style>
 @media print {
-  /* 画面の他要素は隠し、印刷範囲のみ表示 */
+  @page { margin: 12mm; }
+
+  /* 既存の印刷制御 */
   body * { visibility: hidden !important; }
   .print-area, .print-area * { visibility: visible !important; }
   .print-area { position: static !important; }
-
   nav, footer { display: none !important; }
   .btn, .no-print { display: none !important; }
   .card { box-shadow: none !important; border: none !important; }
   .container { max-width: 900px; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* ▼ ここから追加（折り返し改善＆列幅固定） */
+  .dl-2col dt { white-space: nowrap; }
+  .dl-2col { display: flex; flex-wrap: wrap; }
+  .dl-2col dt { flex: 0 0 35%; max-width: 35%; }
+  .dl-2col dd { flex: 0 0 65%; max-width: 65%; word-break: break-word; }
+  /* ▲ ここまで追加 */
 }
 </style>
 
