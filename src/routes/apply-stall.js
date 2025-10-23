@@ -78,27 +78,61 @@ router.post('/:slug/stall/submit', async (req, res) => {
       });
     }
 
-    // 確認で保存した下書きを使う（なければ body）
-    const formData = (req.session && req.session.stallDraft)
-      ? req.session.stallDraft
-      : { ...req.body };
+    // === ここから差し替え ===
 
-    // ここで本来は DB 保存（省略）。保存結果を application にしてもOK
-    const application = formData;
+// 値取り出し＆型変換ヘルパ
+const get = (k) => {
+  const v = req.session?.stallDraft?.[k] ?? req.body?.[k];
+  const s = (v ?? '').toString().trim();
+  return s === '' ? null : s;
+};
+const getInt = (k) => {
+  const s = get(k);
+  if (s === null) return null;
+  const n = parseInt(s, 10);
+  return Number.isFinite(n) ? n : null;
+};
 
-    // 仮の受付番号
-    const fakeReceipt = 'STL-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+// DBへ保存
+const saved = await prisma.stallApplication.create({
+  data: {
+    eventId:          event.id,
+    groupName:        get('groupName'),
+    representative:   get('representative'),
+    email:            get('email'),
+    phone:            get('phone'),
+    address:          get('address'),
 
-    // 下書きクリア
-    if (req.session) delete req.session.stallDraft;
+    boothType:        get('boothType'),      // 例: 飲食/物販/体験
+    boothCount:       getInt('boothCount'),
+    priceRangeMin:    getInt('priceRangeMin'),
+    priceRangeMax:    getInt('priceRangeMax'),
+    rentalTables:     getInt('rentalTables'),
+    rentalChairs:     getInt('rentalChairs'),
+    vehicleType:      get('vehicleType'),
+    vehicleNumbers:   get('vehicleNumbers'),
+    questions:        get('questions'),
 
-    // 完了画面へ（申込内容を渡す！）
-    return res.render('apply_stall_thanks', {
-      title: `${event.title} - 出店申込 完了`,
-      event,
-      applicationNumber: fakeReceipt,
-      application,
-    });
+    privacyConsent:   get('privacyConsent') === 'on',
+    marketingConsent: get('marketingConsent') === 'on',
+  }
+});
+
+// 仮の受付番号（任意）
+const fakeReceipt = 'STL-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+// 下書きクリア
+if (req.session) delete req.session.stallDraft;
+
+// 完了画面へ（DB保存した内容を渡す）
+return res.render('apply_stall_thanks', {
+  title: `${event.title} - 出店申込 完了`,
+  event,
+  applicationNumber: fakeReceipt,
+  application: saved,
+});
+
+// === 差し替えここまで ===
   } catch (err) {
     console.error('[POST stall submit] ', err);
     return res.status(500).render('error', {

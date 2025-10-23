@@ -95,6 +95,7 @@ router.post('/:slug/performer', async (req, res) => {
  * - セッションの下書きをクリア
  * - 完了画面へ
  */
+// POST /apply/:slug/performer/submit → 完了画面（DB保存なしの安全版）
 router.post('/:slug/performer/submit', async (req, res) => {
   try {
     const { slug } = req.params;
@@ -107,47 +108,63 @@ router.post('/:slug/performer/submit', async (req, res) => {
       });
     }
 
-    // セッションにある下書きを読み出す（無ければ body）
+    // 確認で保存していた下書き（なければ今回のPOST）
     const formData =
       (req.session && req.session.performerDraft) ? req.session.performerDraft : { ...req.body };
 
-    // TODO: 本実装：DBに保存
-    // 例）
-    // const app = await prisma.performerApplication.create({
-    //   data: {
-    //     eventId: event.id,
-    //     groupName: formData.groupName,
-    //     email: formData.email,
-    //     // ...
-    //   },
-    // });
+    // --- データベースに保存 ---
+// --- DBに保存（schemaの型に合わせて整形） ---
+const saved = await prisma.performerApplication.create({
+  data: {
+    eventId:        event.id,
+    groupName:      formData.groupName?.trim() || null,
+    representative: formData.representative?.trim() || null,
+    email:          formData.email?.trim() || null,
+    phone:          formData.phone?.trim() || null,
+    address:        formData.address?.trim() || null,
 
-    // 受付番号に相当する値（雰囲気だけ）
-    const fakeReceipt = 'PRF-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+    performance:    formData.performance?.trim() || null,
+    performerCount: parseInt(formData.performerCount || 0, 10) || 0,
+    slotCount:      parseInt(formData.slotCount      || 0, 10) || 0,
 
-// 送信に使ったデータを application として完了画面へ渡す
-const application = formData; // DB保存してるなら saved を使ってOK
+    // ← Prismaが Int なので true/false を 1/0 に直す
+    audioSourceOnly: (formData.audioSourceOnly === 'on') ? 1 : 0,
+
+    rentalAmp:      parseInt(formData.rentalAmp      || 0, 10) || 0,
+    rentalMic:      parseInt(formData.rentalMic      || 0, 10) || 0,
+    vehicleCount:   parseInt(formData.vehicleCount   || 0, 10) || 0,
+    vehicleNumbers: formData.vehicleNumbers?.trim() || null,
+    questions:      formData.questions?.trim()      || null,
+
+    privacyConsent:   formData.privacyConsent   === 'on',
+    marketingConsent: formData.marketingConsent === 'on',
+  },
+});
+
+// 完了画面に渡す元データ（保存結果を採用）
+const application = saved;
+
+// 受付番号（スキーマに receiptNo が無ければ仮番号を生成）
+const fakeReceipt = 'PRF-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
 // 下書きクリア
 if (req.session) delete req.session.performerDraft;
 
-
-// 完了画面へ
+// 完了画面へ（DB保存結果を渡す）
 return res.render('apply_performer_thanks', {
   title: `${event.title} - 出演申込 完了`,
   event,
   applicationNumber: fakeReceipt,
-  application, // ← これが重要（カンマ含めてそのまま）
+  application: saved,
 });
-
-} catch (err) {
-  console.error('[POST performer submit] ', err);
-  return res.status(500).render('error', {
-    title: 'エラー',
-    message: '送信処理でエラーが発生しました。',
-    error: { status: 500 },
-  });
-}
+  } catch (err) {
+    console.error('[POST performer submit] ', err);
+    return res.status(500).render('error', {
+      title: 'エラー',
+      message: '送信処理でエラーが発生しました。',
+      error: { status: 500 },
+    });
+  }
 });
 
 export default router;

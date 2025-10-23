@@ -1,12 +1,14 @@
  import express from 'express';
-  import session from 'express-session';
-  import bodyParser from 'body-parser';
-  import dotenv from 'dotenv';
-  // すでに dotenv-cli で環境変数が入っている場合は .env を読まない
+import session from 'express-session';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 if (!process.env.DATABASE_URL) dotenv.config();
-  import path from 'path';
-  import { fileURLToPath } from 'url';
-  import { PrismaClient } from '@prisma/client';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { PrismaClient } from '@prisma/client';
+
+// ✅ 管理画面ルーターを先に読み込む（OK）
+import adminRouter from './src/routes/admin.js';
 
   // --- optional helmet ---
   let helmet;

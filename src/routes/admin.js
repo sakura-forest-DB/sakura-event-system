@@ -1,6 +1,10 @@
+// src/routes/admin.js
 import express from 'express';
 import fs from 'fs/promises';
 import createCsvWriter from 'csv-writer';
+
+// 👇 これを追加（src/routes → src/lib の相対パスは ../lib）
+import prisma from '../lib/prisma.js';
 
 const router = express.Router();
 
